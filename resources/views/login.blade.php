@@ -18,8 +18,15 @@
         </div>
 
         <!-- Formulario -->
-        <form action="/" method="POST">
+        <form action="{{ url('/login') }}" method="POST">
             @csrf <!-- Directiva de seguridad contra ataques CSRF -->
+
+            <!-- Error de autenticación -->
+            @if ($errors->any())
+                <div class="mb-5 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+                    {{ $errors->first() }}
+                </div>
+            @endif
             
             <!-- Campo Email / Usuario -->
             <div class="mb-5">

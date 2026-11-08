@@ -56,13 +56,16 @@
             
             <div class="flex items-center gap-4">
                 <div class="text-right hidden sm:block">
-                    <p class="text-sm font-bold text-gray-800">Soria, Sergio</p>
+                    <p class="text-sm font-bold text-gray-800">{{ auth()->user()->name }}</p>
                     <p class="text-xs text-blue-500 font-semibold">Administrador</p>
                 </div>
                 <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                    SS
+                    {{ collect(explode(' ', str_replace(',', '', auth()->user()->name)))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('') }}
                 </div>
-                <a href="#" class="text-red-500 hover:text-red-700 text-sm font-semibold ml-2">Salir</a>
+                <form action="{{ url('/logout') }}" method="POST" class="ml-2">
+                    @csrf
+                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-semibold">Salir</button>
+                </form>
             </div>
         </header>
 

@@ -47,14 +47,9 @@
             <p class="app-login-lead">Ingresá con tu cuenta para administrar repuestos, stock y ventas.</p>
 
             <!-- Formulario -->
+            {{-- TASK-7: action route('login') + @csrf, igual que el POST de Breeze. --}}
             <form action="{{ route('login') }}" method="POST" class="app-login-form">
                 @csrf
-
-                @if ($errors->any())
-                    <div class="app-login-error">
-                        {{ $errors->first() }}
-                    </div>
-                @endif
 
                 <div class="app-field">
                     <label for="email">Correo electrónico</label>
@@ -65,9 +60,15 @@
                         value="{{ old('email') }}"
                         placeholder="admin@italfiat.com"
                         autocomplete="username"
+                        @class(['is-invalid' => $errors->has('email')])
+                        @error('email') aria-invalid="true" aria-describedby="email-error" @enderror
                         required
                         autofocus
                     >
+                    {{-- TASK-8: error dinámico del campo email. --}}
+                    @error('email')
+                        <p class="app-field-error" id="email-error" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="app-field">
@@ -81,8 +82,14 @@
                         name="password"
                         placeholder="••••••••"
                         autocomplete="current-password"
+                        @class(['is-invalid' => $errors->has('password')])
+                        @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
                         required
                     >
+                    {{-- TASK-8: error dinámico del campo contraseña. --}}
+                    @error('password')
+                        <p class="app-field-error" id="password-error" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <button type="submit" class="app-login-btn">Iniciar sesión</button>

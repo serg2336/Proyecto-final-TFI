@@ -13,7 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void { 
       
-
+  $middleware->alias([
+            'checkrol' => \App\Http\Middleware\CheckRol::class,
+        ]);
+          // Excepción TEMPORAL para probar con la terminal
+        $middleware->validateCsrfTokens(except: [
+            'productos/*',
+            'productos'
+        ]);
+    
         
         //
     })

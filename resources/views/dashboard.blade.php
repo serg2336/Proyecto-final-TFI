@@ -9,13 +9,13 @@
         <!-- Tarjeta 1 -->
         <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
             <p class="text-sm text-gray-500 font-semibold mb-2">Total Productos</p>
-            <p class="text-3xl font-bold text-gray-800">1,245</p>
+            <p class="text-3xl font-bold text-gray-800">{{ number_format($totalProductos, 0, ',', '.') }}</p>
         </div>
 
         <!-- Tarjeta 2 -->
         <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
             <p class="text-sm text-gray-500 font-semibold mb-2">Stock Crítico (Alertas)</p>
-            <p class="text-3xl font-bold text-red-500">12</p>
+            <p class="text-3xl font-bold text-red-500">{{ number_format($stockCritico, 0, ',', '.') }}</p>
         </div>
 
         <!-- Tarjeta 3 -->
@@ -80,20 +80,21 @@
                 <h3 class="text-lg font-semibold text-gray-800">Repuestos a Reponer</h3>
             </div>
             <ul class="divide-y divide-gray-200">
-                <li class="p-4 flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold text-gray-800">Correa Poly-V</p>
-                        <p class="text-xs text-gray-500">Quedan solo 2 unidades</p>
-                    </div>
-                    <span class="text-red-500 text-xl">⚠️</span>
-                </li>
-                <li class="p-4 flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold text-gray-800">Aceite 5W-40</p>
-                        <p class="text-xs text-gray-500">Quedan solo 5 unidades</p>
-                    </div>
-                    <span class="text-red-500 text-xl">⚠️</span>
-                </li>
+                @forelse($productosAReponer as $producto)
+                    <li class="p-4 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ $producto->descripcion }}</p>
+                            <p class="text-xs text-gray-500">
+                                Quedan solo {{ $producto->stock }} unidades (mínimo {{ $producto->stock_minimo }})
+                            </p>
+                        </div>
+                        <span class="text-red-500 text-xl">⚠️</span>
+                    </li>
+                @empty
+                    <li class="p-4 text-sm text-gray-500">
+                        No hay repuestos con stock crítico. 👌
+                    </li>
+                @endforelse
             </ul>
         </div>
 

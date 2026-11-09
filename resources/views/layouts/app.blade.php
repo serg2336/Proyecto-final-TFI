@@ -17,28 +17,34 @@
 
         <!-- Navegación -->
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            <a href="{{ url('/') }}" class="flex items-center gap-3 px-4 py-3 bg-blue-600 rounded-lg text-white transition">
+            @php
+                $linkBase = 'flex items-center gap-3 px-4 py-3 rounded-lg transition';
+                $linkActivo = 'bg-blue-600 text-white';
+                $linkInactivo = 'hover:bg-slate-800 text-gray-300 hover:text-white';
+            @endphp
+
+            <a href="{{ url('/') }}" class="{{ $linkBase }} {{ request()->is('/') ? $linkActivo : $linkInactivo }}">
                 <span>📊</span> Dashboard
             </a>
-            <a href="{{ url('/productos') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
+            <a href="{{ url('/productos') }}" class="{{ $linkBase }} {{ request()->is('productos*') ? $linkActivo : $linkInactivo }}">
                 <span>📦</span> Productos (repuestos)
             </a>
-            <a href="{{ url('/stock') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
+            <a href="{{ url('/stock') }}" class="{{ $linkBase }} {{ request()->is('stock*') ? $linkActivo : $linkInactivo }}">
                 <span>📉</span> Control de Stock
             </a>
-            <a href="{{ url('/pedidos') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
+            <a href="{{ url('/pedidos') }}" class="{{ $linkBase }} {{ request()->is('pedidos*') ? $linkActivo : $linkInactivo }}">
                 <span>🚚</span> Pedidos a Proveedores
             </a>
-            <a href="{{ url('/ventas') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
+            <a href="{{ url('/ventas') }}" class="{{ $linkBase }} {{ request()->is('ventas*') ? $linkActivo : $linkInactivo }}">
                 <span>💰</span> Ventas
             </a>
-            <a href="{{ url('/clientes') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
+            <a href="{{ url('/clientes') }}" class="{{ $linkBase }} {{ request()->is('clientes*') ? $linkActivo : $linkInactivo }}">
                 <span>👥</span> Clientes
             </a>
-            <a href="{{ url('/reportes') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
+            <a href="{{ url('/reportes') }}" class="{{ $linkBase }} {{ request()->is('reportes*') ? $linkActivo : $linkInactivo }}">
                 <span>📄</span> Reportes
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition mt-auto border-t border-slate-800 pt-4">
+            <a href="#" class="{{ $linkBase }} {{ $linkInactivo }} mt-auto border-t border-slate-800 pt-4">
                 <span>⚙️</span> Usuarios y Roles
             </a>
         </nav>

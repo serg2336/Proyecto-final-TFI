@@ -14,6 +14,12 @@
         </button>
     </div>
 
+    @if (session('success'))
+        <div class="mb-6 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Barra de Búsqueda y Filtros -->
     <div class="bg-white p-4 rounded-lg shadow mb-6 flex gap-4">
         <input type="text" placeholder="Buscar por código o descripción..." class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -44,60 +50,44 @@
                 </tr>
             </thead>
             <tbody class="text-gray-700">
-                <!-- Fila 1 -->
+                @forelse($productos as $producto)
                 <tr class="hover:bg-gray-50 border-b">
-                    <td class="py-4 px-6 font-mono text-sm">REP-001</td>
-                    <td class="py-4 px-6 font-semibold">Filtro de Aceite</td>
-                    <td class="py-4 px-6">Fiat / Palio</td>
-                    <td class="py-4 px-6">$ 12,500.00</td>
+                    <td class="py-4 px-6 font-mono text-sm">{{ $producto->codigo }}</td>
+                    <td class="py-4 px-6 font-semibold">{{ $producto->descripcion }}</td>
                     <td class="py-4 px-6">
-                        <span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">25 un.</span>
+                        {{ $producto->marca }}@if($producto->modelo) / {{ $producto->modelo }}@endif
+                    </td>
+                    <td class="py-4 px-6">$ {{ number_format($producto->precio, 2, ',', '.') }}</td>
+                    <td class="py-4 px-6">
+                        @if($producto->stock <= $producto->stock_minimo)
+                            <span class="text-red-600 bg-red-100 px-2 py-1 rounded text-xs font-bold">{{ $producto->stock }} un.</span>
+                        @else
+                            <span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">{{ $producto->stock }} un.</span>
+                        @endif
                     </td>
                     <td class="py-4 px-6 text-center space-x-2">
                         <button class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Editar</button>
-                        <button class="text-red-500 hover:text-red-700 font-semibold text-sm">Eliminar</button>
+                        <form action="{{ route('productos.destroy', $producto) }}" method="POST" class="inline"
+                              onsubmit="return confirm('¿Eliminar el producto {{ $producto->codigo }}?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:text-red-700 font-semibold text-sm">Eliminar</button>
+                        </form>
                     </td>
                 </tr>
-                <!-- Fila 2 -->
-                <tr class="hover:bg-gray-50 border-b">
-                    <td class="py-4 px-6 font-mono text-sm">REP-002</td>
-                    <td class="py-4 px-6 font-semibold">Pastillas de Freno</td>
-                    <td class="py-4 px-6">Fiat / Uno</td>
-                    <td class="py-4 px-6">$ 18,200.00</td>
-                    <td class="py-4 px-6">
-                        <span class="text-red-600 bg-red-100 px-2 py-1 rounded text-xs font-bold">2 un.</span>
-                    </td>
-                    <td class="py-4 px-6 text-center space-x-2">
-                        <button class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Editar</button>
-                        <button class="text-red-500 hover:text-red-700 font-semibold text-sm">Eliminar</button>
+                @empty
+                <tr>
+                    <td colspan="6" class="py-10 px-6 text-center text-gray-500">
+                        No hay productos cargados todavía. Usá el botón <span class="font-semibold">Nuevo Producto</span> para agregar el primero.
                     </td>
                 </tr>
-                <!-- Fila 3 -->
-                <tr class="hover:bg-gray-50">
-                    <td class="py-4 px-6 font-mono text-sm">REP-003</td>
-                    <td class="py-4 px-6 font-semibold">Correa Poly-V</td>
-                    <td class="py-4 px-6">Fiat / Siena</td>
-                    <td class="py-4 px-6">$ 8,900.00</td>
-                    <td class="py-4 px-6">
-                        <span class="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs font-bold">5 un.</span>
-                    </td>
-                    <td class="py-4 px-6 text-center space-x-2">
-                        <button class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Editar</button>
-                        <button class="text-red-500 hover:text-red-700 font-semibold text-sm">Eliminar</button>
-                    </td>
-                </tr>
+                @endforelse
             </tbody>
         </table>
         
-        <!-- Paginación (visual) -->
+        <!-- Pie de tabla -->
         <div class="bg-gray-50 px-6 py-4 border-t flex items-center justify-between">
-            <span class="text-sm text-gray-600">Mostrando 1 a 3 de 1,245 productos</span>
-            <div class="flex space-x-1">
-                <button class="px-3 py-1 border border-gray-300 rounded bg-white text-gray-500 hover:bg-gray-100">Anterior</button>
-                <button class="px-3 py-1 border border-gray-300 rounded bg-blue-500 text-white">1</button>
-                <button class="px-3 py-1 border border-gray-300 rounded bg-white text-gray-500 hover:bg-gray-100">2</button>
-                <button class="px-3 py-1 border border-gray-300 rounded bg-white text-gray-500 hover:bg-gray-100">Siguiente</button>
-            </div>
+            <span class="text-sm text-gray-600">Mostrando {{ $productos->count() }} producto(s)</span>
         </div>
     </div>
 
@@ -111,36 +101,47 @@
             </div>
 
             <!-- Cuerpo del Formulario -->
-            <form action="#" method="POST" class="mt-4">
+            <form action="{{ route('productos.store') }}" method="POST" class="mt-4">
                 @csrf
+
+                @if ($errors->any())
+                    <div class="mb-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Código del Repuesto</label>
-                        <input type="text" placeholder="Ej: REP-004" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                        <input type="text" name="codigo" value="{{ old('codigo') }}" placeholder="Ej: REP-004" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Descripción</label>
-                        <input type="text" placeholder="Ej: Filtro de Aire" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                        <input type="text" name="descripcion" value="{{ old('descripcion') }}" placeholder="Ej: Filtro de Aire" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Marca</label>
-                        <select class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
-                            <option>Fiat</option>
-                            <option>Volkswagen</option>
-                            <option>Ford</option>
+                        <select name="marca" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
+                            <option value="Fiat" @selected(old('marca') === 'Fiat')>Fiat</option>
+                            <option value="Volkswagen" @selected(old('marca') === 'Volkswagen')>Volkswagen</option>
+                            <option value="Ford" @selected(old('marca') === 'Ford')>Ford</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Modelo Compatible</label>
-                        <input type="text" placeholder="Ej: Palio / Siena" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
+                        <input type="text" name="modelo" value="{{ old('modelo') }}" placeholder="Ej: Palio / Siena" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Precio de Venta ($)</label>
-                        <input type="number" placeholder="0.00" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                        <input type="number" name="precio" value="{{ old('precio') }}" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Inicial</label>
-                        <input type="number" placeholder="Ej: 10" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                        <input type="number" name="stock" value="{{ old('stock') }}" min="0" placeholder="Ej: 10" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
                     </div>
                 </div>
 
@@ -163,5 +164,10 @@
             const modal = document.getElementById('modalNuevoProducto');
             modal.classList.toggle('hidden');
         }
+
+        // Si la validación del backend falla, reabrimos el modal con los errores
+        @if ($errors->any())
+            document.getElementById('modalNuevoProducto').classList.remove('hidden');
+        @endif
     </script>
 @endsection

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ProductoController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -16,9 +17,9 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     });
 
-    Route::get('/productos', function () {
-        return view('productos');
-    });
+    Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
+    Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
+    Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
 
     Route::get('/stock', function () {
         return view('stock');

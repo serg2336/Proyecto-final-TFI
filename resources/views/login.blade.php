@@ -18,7 +18,7 @@
         </div>
 
         <!-- Formulario -->
-        <form action="{{ url('/login') }}" method="POST">
+        <form action="{{ route('login') }}" method="POST">
             @csrf <!-- Directiva de seguridad contra ataques CSRF -->
 
             <!-- Error de autenticación -->
@@ -31,7 +31,7 @@
             <!-- Campo Email / Usuario -->
             <div class="mb-5">
                 <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Correo Electrónico</label>
-                <input type="email" id="email" name="email" placeholder="admin@italfiat.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="admin@italfiat.com" autocomplete="username" autofocus class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
             </div>
 
             <!-- Campo Contraseña -->
@@ -40,7 +40,7 @@
                     <label for="password" class="block text-sm font-semibold text-gray-700">Contraseña</label>
                     <a href="#" class="text-xs text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
                 </div>
-                <input type="password" id="password" name="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
+                <input type="password" id="password" name="password" autocomplete="current-password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
             </div>
 
             <!-- Botón de Ingreso -->

@@ -344,6 +344,10 @@ body.app-dark {
     color: #e9e9ee;
 }
 
+.app-dark .text-blue-600 {
+    color: var(--app-red-bright);
+}
+
 .app-dark .text-blue-700 {
     color: #9db2ff;
 }
@@ -483,6 +487,120 @@ body.app-dark {
     --tw-ring-color: rgba(210, 13, 30, 0.45);
 }
 
+/* ---------- Hero del dashboard (rueda ITAL FIAT) ---------- */
+
+.app-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: center;
+    gap: 32px;
+    padding: 4px 0 36px;
+}
+
+.app-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    color: var(--app-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.app-eyebrow .tick {
+    display: inline-block;
+    width: 26px;
+    height: 3px;
+    background: var(--app-red);
+    box-shadow: 0 0 10px rgba(210, 13, 30, 0.8);
+}
+
+.app-hero-title {
+    margin: 0;
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.app-hero-title .accent {
+    color: var(--app-red-bright);
+    text-shadow: 0 0 34px rgba(210, 13, 30, 0.55);
+}
+
+.app-hero-lead {
+    max-width: 520px;
+    margin: 18px 0 0;
+    color: var(--app-muted);
+    font-size: 14.5px;
+    line-height: 1.6;
+}
+
+.app-wheel {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 250px;
+}
+
+.app-gear {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 290px;
+    height: 290px;
+    color: rgba(210, 13, 30, 0.42);
+    animation: app-spin 30s linear infinite;
+}
+
+@keyframes app-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.app-stamp {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    border: 2px solid var(--app-red);
+    background: radial-gradient(circle at 50% 35%, rgba(210, 13, 30, 0.22), rgba(7, 7, 8, 0.95) 70%);
+    box-shadow: 0 0 0 6px rgba(210, 13, 30, 0.08), 0 0 40px rgba(210, 13, 30, 0.25);
+    text-align: center;
+}
+
+.app-stamp strong {
+    display: block;
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: 26px;
+    line-height: 0.9;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.app-stamp span {
+    display: block;
+    margin-top: 7px;
+    font-size: 8.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--app-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-gear {
+        animation: none;
+    }
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1120px) {
@@ -503,6 +621,32 @@ body.app-dark {
 
     .app-nav::-webkit-scrollbar {
         height: 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .app-hero {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding-bottom: 28px;
+    }
+
+    .app-wheel {
+        height: 210px;
+    }
+
+    .app-gear {
+        width: 230px;
+        height: 230px;
+    }
+
+    .app-stamp {
+        width: 122px;
+        height: 122px;
+    }
+
+    .app-stamp strong {
+        font-size: 21px;
     }
 }
 

@@ -3,6 +3,39 @@
 @section('titulo_pagina', 'Dashboard - Resumen General')
 
 @section('content')
+    <!-- Hero con la rueda de ITAL FIAT -->
+    <section class="app-hero">
+        <div>
+            <p class="app-eyebrow"><span class="tick"></span>Panel de control · Inventario</p>
+            <h1 class="app-hero-title">Panel de<br><span class="accent">Control</span></h1>
+            <p class="app-hero-lead">
+                Resumen general del sistema de repuestos: stock, pedidos y ventas en un solo lugar.
+            </p>
+        </div>
+
+        <div class="app-wheel" aria-hidden="true">
+            <svg class="app-gear" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="5">
+                <circle cx="100" cy="100" r="62"/>
+                <circle cx="100" cy="100" r="24"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(0 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(45 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(90 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(135 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(180 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(225 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(270 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(315 100 100)"/>
+            </svg>
+
+            <div class="app-stamp">
+                <div>
+                    <strong>ITAL<br>FIAT</strong>
+                    <span>Repuestos</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Tarjetas de Indicadores -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         

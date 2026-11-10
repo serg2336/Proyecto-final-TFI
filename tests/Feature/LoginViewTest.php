@@ -78,4 +78,16 @@ class LoginViewTest extends TestCase
             ->assertSee('action="'.route('login').'"', false)
             ->assertSee('name="_token"', false);
     }
+
+    /** El copy del login es el aprobado en el tablero. */
+    public function test_login_view_muestra_el_copy_actualizado(): void
+    {
+        $this->get('/login')
+            ->assertOk()
+            ->assertSee('Acceso al sistema')
+            ->assertSee('Bienvenido')
+            ->assertSee('de nuevo')
+            ->assertSee('Iniciá sesión para administrar tu catálogo.')
+            ->assertSee('Correo y contraseña');
+    }
 }

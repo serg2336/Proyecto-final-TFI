@@ -42,14 +42,16 @@
             </div>
 
             <!-- Título -->
-            <p class="app-eyebrow app-eyebrow-center"><span class="tick"></span>Sistema de gestión</p>
-            <h1 class="app-login-title">ITAL <span class="accent">FIAT</span></h1>
-            <p class="app-login-lead">Ingresá con tu cuenta para administrar repuestos, stock y ventas.</p>
+            <p class="app-eyebrow app-eyebrow-center"><span class="tick"></span>Acceso al sistema</p>
+            <h1 class="app-login-title">Bienvenido <span class="accent">de nuevo</span></h1>
+            <p class="app-login-lead">Iniciá sesión para administrar tu catálogo.</p>
 
             <!-- Formulario -->
             {{-- TASK-7: action route('login') + @csrf, igual que el POST de Breeze. --}}
             <form action="{{ route('login') }}" method="POST" class="app-login-form">
                 @csrf
+
+                <p class="app-form-legend">Correo y contraseña</p>
 
                 <div class="app-field">
                     <label for="email">Correo electrónico</label>

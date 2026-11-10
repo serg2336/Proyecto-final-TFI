@@ -61,4 +61,14 @@ class User extends Authenticatable
             default => 'Usuario',
         };
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function hasAnyRole(string ...$roles): bool
+    {
+        return in_array($this->role, $roles, true);
+    }
 }

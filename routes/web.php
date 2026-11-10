@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\UserController;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +24,9 @@ Route::middleware('auth')->group(function () {
             ->get();
 
         return view('dashboard', compact('totalProductos', 'stockCritico', 'productosAReponer'));
-    });
+    })->name('dashboard');
 
+    // Catálogo y stock: los tres roles pueden consultarlos.
     Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
     Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
     Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
@@ -33,21 +35,26 @@ Route::middleware('auth')->group(function () {
         $productos = Producto::query()->orderBy('stock')->orderBy('descripcion')->get();
 
         return view('stock', compact('productos'));
+    })->name('stock.index');
+
+    // Pedidos: administrador y depósito.
+    Route::middleware('role:administrador,deposito')->group(function () {
+        Route::get('/pedidos', fn () => view('pedidos'))->name('pedidos.index');
     });
 
-    Route::get('/pedidos', function () {
-        return view('pedidos');
+    // Ventas y clientes: administrador y vendedor.
+    Route::middleware('role:administrador,vendedor')->group(function () {
+        Route::get('/ventas', fn () => view('ventas'))->name('ventas.index');
+        Route::get('/clientes', fn () => view('clientes'))->name('clientes.index');
     });
 
-    Route::get('/reportes', function () {
-        return view('reportes');
-    });
+    // Reportes y gestión de usuarios: solo administrador.
+    Route::middleware('role:administrador')->group(function () {
+        Route::get('/reportes', fn () => view('reportes'))->name('reportes.index');
 
-    Route::get('/clientes', function () {
-        return view('clientes');
-    });
-
-    Route::get('/ventas', function () {
-        return view('ventas');
+        Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
+        Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
+        Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('usuarios.update');
+        Route::delete('/usuarios/{user}', [UserController::class, 'destroy'])->name('usuarios.destroy');
     });
 });

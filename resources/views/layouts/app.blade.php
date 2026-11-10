@@ -1,3 +1,4 @@
+@use('App\Models\User')
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
@@ -30,10 +31,20 @@
                 <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'is-active' : '' }}">Dashboard</a>
                 <a href="{{ url('/productos') }}" class="{{ request()->is('productos*') ? 'is-active' : '' }}">Productos</a>
                 <a href="{{ url('/stock') }}" class="{{ request()->is('stock*') ? 'is-active' : '' }}">Stock</a>
-                <a href="{{ url('/pedidos') }}" class="{{ request()->is('pedidos*') ? 'is-active' : '' }}">Pedidos</a>
-                <a href="{{ url('/ventas') }}" class="{{ request()->is('ventas*') ? 'is-active' : '' }}">Ventas</a>
-                <a href="{{ url('/clientes') }}" class="{{ request()->is('clientes*') ? 'is-active' : '' }}">Clientes</a>
-                <a href="{{ url('/reportes') }}" class="{{ request()->is('reportes*') ? 'is-active' : '' }}">Reportes</a>
+
+                @if (auth()->user()?->hasAnyRole(User::ROLE_ADMIN, User::ROLE_DEPOSITO))
+                    <a href="{{ url('/pedidos') }}" class="{{ request()->is('pedidos*') ? 'is-active' : '' }}">Pedidos</a>
+                @endif
+
+                @if (auth()->user()?->hasAnyRole(User::ROLE_ADMIN, User::ROLE_VENDEDOR))
+                    <a href="{{ url('/ventas') }}" class="{{ request()->is('ventas*') ? 'is-active' : '' }}">Ventas</a>
+                    <a href="{{ url('/clientes') }}" class="{{ request()->is('clientes*') ? 'is-active' : '' }}">Clientes</a>
+                @endif
+
+                @if (auth()->user()?->isAdmin())
+                    <a href="{{ url('/reportes') }}" class="{{ request()->is('reportes*') ? 'is-active' : '' }}">Reportes</a>
+                    <a href="{{ url('/usuarios') }}" class="{{ request()->is('usuarios*') ? 'is-active' : '' }}">Usuarios</a>
+                @endif
             </nav>
 
             <div class="app-header-right">

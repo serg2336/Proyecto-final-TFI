@@ -1,52 +1,107 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - ITAL FIAT</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen font-sans antialiased">
+<body class="app-dark app-login h-full">
 
-    <!-- Tarjeta del Login -->
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border-t-4 border-blue-600">
-        
-        <!-- Logo / Título -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-wider">ITAL FIAT</h1>
-            <p class="text-gray-500 text-sm mt-2">Sistema de Gestión de Repuestos</p>
-        </div>
+    <div class="app-strip" aria-hidden="true"></div>
 
-        <!-- Formulario -->
-        <form action="/" method="POST">
-            @csrf <!-- Directiva de seguridad contra ataques CSRF -->
-            
-            <!-- Campo Email / Usuario -->
-            <div class="mb-5">
-                <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Correo Electrónico</label>
-                <input type="email" id="email" name="email" placeholder="admin@italfiat.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
-            </div>
+    <main class="app-login-main">
+        <section class="app-login-card">
 
-            <!-- Campo Contraseña -->
-            <div class="mb-5">
-                <div class="flex justify-between items-center mb-1">
-                    <label for="password" class="block text-sm font-semibold text-gray-700">Contraseña</label>
-                    <a href="#" class="text-xs text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
+            <!-- Rueda animada con el sello ITAL FIAT -->
+            <div class="app-wheel" aria-hidden="true">
+                <svg class="app-gear" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="5">
+                    <circle cx="100" cy="100" r="62"/>
+                    <circle cx="100" cy="100" r="24"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(0 100 100)"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(45 100 100)"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(90 100 100)"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(135 100 100)"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(180 100 100)"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(225 100 100)"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(270 100 100)"/>
+                    <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(315 100 100)"/>
+                </svg>
+
+                <div class="app-stamp">
+                    <div>
+                        <strong>ITAL<br>FIAT</strong>
+                        <span>Repuestos</span>
+                    </div>
                 </div>
-                <input type="password" id="password" name="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" required>
             </div>
 
-            <!-- Botón de Ingreso -->
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300 flex justify-center items-center gap-2">
-                Iniciar Sesión
-            </button>
-        </form>
+            <!-- Título -->
+            <p class="app-eyebrow app-eyebrow-center"><span class="tick"></span>Acceso al sistema</p>
+            <h1 class="app-login-title">Bienvenido <span class="accent">de nuevo</span></h1>
+            <p class="app-login-lead">Iniciá sesión para administrar tu catálogo.</p>
 
-        <!-- Footer -->
-        <div class="mt-8 text-center text-xs text-gray-400">
-            &copy; 2024 ITAL FIAT - Formosa, Argentina.
-        </div>
-    </div>
+            <!-- Formulario -->
+            {{-- TASK-7: action route('login') + @csrf, igual que el POST de Breeze. --}}
+            <form action="{{ route('login') }}" method="POST" class="app-login-form">
+                @csrf
+
+                <p class="app-form-legend">Correo y contraseña</p>
+
+                <div class="app-field">
+                    <label for="email">Correo electrónico</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="admin@italfiat.com"
+                        autocomplete="username"
+                        @class(['is-invalid' => $errors->has('email')])
+                        @error('email') aria-invalid="true" aria-describedby="email-error" @enderror
+                        required
+                        autofocus
+                    >
+                    {{-- TASK-8: error dinámico del campo email. --}}
+                    @error('email')
+                        <p class="app-field-error" id="email-error" role="alert">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="app-field">
+                    <div class="app-field-row">
+                        <label for="password">Contraseña</label>
+                        <a href="#" class="app-login-link">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="••••••••"
+                        autocomplete="current-password"
+                        @class(['is-invalid' => $errors->has('password')])
+                        @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
+                        required
+                    >
+                    {{-- TASK-8: error dinámico del campo contraseña. --}}
+                    @error('password')
+                        <p class="app-field-error" id="password-error" role="alert">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <button type="submit" class="app-login-btn">Iniciar sesión</button>
+            </form>
+
+            <div class="app-login-foot">
+                &copy; {{ date('Y') }} ITAL FIAT · Formosa, Argentina
+            </div>
+        </section>
+    </main>
 
 </body>
-</html> 
+</html>

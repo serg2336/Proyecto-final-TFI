@@ -3,19 +3,53 @@
 @section('titulo_pagina', 'Dashboard - Resumen General')
 
 @section('content')
+    <!-- Hero con la rueda de ITAL FIAT -->
+    <section class="app-hero">
+        <div>
+            <p class="app-eyebrow"><span class="tick"></span>Panel de control · Inventario</p>
+            <h1 class="app-hero-title">Panel de<br><span class="accent">Control</span></h1>
+            <p class="app-hero-lead">
+                Cada producto, en su lugar.<br>
+                Información precisa para decisiones precisas.
+            </p>
+        </div>
+
+        <div class="app-wheel" aria-hidden="true">
+            <svg class="app-gear" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="5">
+                <circle cx="100" cy="100" r="62"/>
+                <circle cx="100" cy="100" r="24"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(0 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(45 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(90 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(135 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(180 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(225 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(270 100 100)"/>
+                <rect x="93" y="12" width="14" height="24" rx="2" transform="rotate(315 100 100)"/>
+            </svg>
+
+            <div class="app-stamp">
+                <div>
+                    <strong>ITAL<br>FIAT</strong>
+                    <span>Repuestos</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Tarjetas de Indicadores -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         
         <!-- Tarjeta 1 -->
         <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
             <p class="text-sm text-gray-500 font-semibold mb-2">Total Productos</p>
-            <p class="text-3xl font-bold text-gray-800">1,245</p>
+            <p class="text-3xl font-bold text-gray-800">{{ number_format($totalProductos, 0, ',', '.') }}</p>
         </div>
 
         <!-- Tarjeta 2 -->
         <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
             <p class="text-sm text-gray-500 font-semibold mb-2">Stock Crítico (Alertas)</p>
-            <p class="text-3xl font-bold text-red-500">12</p>
+            <p class="text-3xl font-bold text-red-500">{{ number_format($stockCritico, 0, ',', '.') }}</p>
         </div>
 
         <!-- Tarjeta 3 -->
@@ -80,20 +114,21 @@
                 <h3 class="text-lg font-semibold text-gray-800">Repuestos a Reponer</h3>
             </div>
             <ul class="divide-y divide-gray-200">
-                <li class="p-4 flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold text-gray-800">Correa Poly-V</p>
-                        <p class="text-xs text-gray-500">Quedan solo 2 unidades</p>
-                    </div>
-                    <span class="text-red-500 text-xl">⚠️</span>
-                </li>
-                <li class="p-4 flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold text-gray-800">Aceite 5W-40</p>
-                        <p class="text-xs text-gray-500">Quedan solo 5 unidades</p>
-                    </div>
-                    <span class="text-red-500 text-xl">⚠️</span>
-                </li>
+                @forelse($productosAReponer as $producto)
+                    <li class="p-4 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ $producto->descripcion }}</p>
+                            <p class="text-xs text-gray-500">
+                                Quedan solo {{ $producto->stock }} unidades (mínimo {{ $producto->stock_minimo }})
+                            </p>
+                        </div>
+                        <span class="text-red-500 text-xl">⚠️</span>
+                    </li>
+                @empty
+                    <li class="p-4 text-sm text-gray-500">
+                        No hay repuestos con stock crítico. 👌
+                    </li>
+                @endforelse
             </ul>
         </div>
 

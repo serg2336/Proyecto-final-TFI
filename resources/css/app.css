@@ -7,3 +7,890 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* ==========================================================================
+   Diseño ITAL FIAT — estética automotor (negro / rojo / tipografía Oswald)
+   Todo va scopeado a body.app-dark así el Login queda como está.
+   ========================================================================== */
+
+:root {
+    --app-bg: #070708;
+    --app-panel: #111113;
+    --app-panel-2: #17171a;
+    --app-line: #26262b;
+    --app-line-soft: #1d1d21;
+    --app-red: #d20d1e;
+    --app-red-bright: #ff2b2b;
+    --app-text: #f5f5f5;
+    --app-muted: #96969e;
+    --app-ok: #35d07f;
+    --app-warn: #f5b02e;
+}
+
+body.app-dark {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--app-bg);
+    background-image:
+        radial-gradient(circle at 88% -12%, rgba(210, 13, 30, 0.3), transparent 42%),
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 24px);
+    background-attachment: fixed;
+    color: var(--app-text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Estructura ---------- */
+
+.app-wrap {
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.app-strip {
+    height: 5px;
+    background: linear-gradient(90deg, var(--app-red) 0 52%, #f2f2f2 52% 58%, var(--app-red) 58% 100%);
+}
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--app-line);
+    background: rgba(7, 7, 8, 0.85);
+    backdrop-filter: blur(10px);
+}
+
+.app-header-inner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    height: 72px;
+}
+
+.app-main {
+    padding-top: 40px;
+    padding-bottom: 48px;
+}
+
+.app-footer {
+    border-top: 1px solid var(--app-line);
+    background: rgba(0, 0, 0, 0.32);
+}
+
+.app-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 18px;
+    padding-bottom: 22px;
+    color: var(--app-muted);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+}
+
+/* ---------- Marca ---------- */
+
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--app-text);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.app-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    background: var(--app-red);
+    color: #fff;
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    transform: skewX(-9deg);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(210, 13, 30, 0.35);
+}
+
+.app-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.app-brand-text strong {
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: 19px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.app-brand-text small {
+    margin-top: 2px;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--app-muted);
+}
+
+/* ---------- Navegación ---------- */
+
+.app-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.app-nav a {
+    position: relative;
+    padding: 9px 12px;
+    border-radius: 4px;
+    color: var(--app-muted);
+    text-decoration: none;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.app-nav a:hover {
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.app-nav a.is-active {
+    color: #fff;
+}
+
+.app-nav a.is-active::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 2px;
+    background: var(--app-red);
+    box-shadow: 0 0 10px rgba(210, 13, 30, 0.9);
+}
+
+/* ---------- Usuario ---------- */
+
+.app-header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.app-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-avatar {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--app-panel-2);
+    border: 1px solid var(--app-line);
+    color: #fff;
+    font-family: 'Oswald', 'Arial Narrow', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+}
+
+.app-user-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.app-user-meta strong {
+    font-size: 12.5px;
+}
+
+.app-user-meta small {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--app-muted);
+}
+
+.app-logout {
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #ff5f5f;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.app-logout:hover {
+    background: rgba(210, 13, 30, 0.12);
+    color: #ff9090;
+}
+
+/* ---------- Títulos de sección ---------- */
+
+.app-dark h3 {
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.app-dark main h3::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 0.8em;
+    margin-right: 12px;
+    background: var(--app-red);
+    vertical-align: -1px;
+    box-shadow: 0 0 12px rgba(210, 13, 30, 0.6);
+}
+
+.app-dark h4 {
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.app-dark .text-3xl {
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    line-height: 1;
+}
+
+/* ---------- Tarjetas / paneles ---------- */
+
+.app-dark .bg-white {
+    background: linear-gradient(180deg, var(--app-panel-2), var(--app-panel));
+    /* outline en vez de border para no pisar los acentos (border-l-4, border-t-4, etc.) */
+    outline: 1px solid var(--app-line);
+    outline-offset: -1px;
+}
+
+.app-dark .bg-gray-50 {
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.app-dark .bg-gray-100 {
+    background-color: var(--app-panel);
+}
+
+.app-dark .bg-gray-200 {
+    background-color: #242429;
+    color: #e7e7ec;
+}
+
+.app-dark .hover\:bg-gray-50:hover {
+    background-color: rgba(210, 13, 30, 0.055);
+}
+
+.app-dark .hover\:bg-gray-300:hover {
+    background-color: #2f2f36;
+}
+
+.app-dark .shadow,
+.app-dark .shadow-sm,
+.app-dark .shadow-md,
+.app-dark .shadow-lg {
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.app-dark .rounded-lg,
+.app-dark .rounded {
+    border-radius: 4px;
+}
+
+/* ---------- Textos ---------- */
+
+.app-dark .text-gray-800 {
+    color: var(--app-text);
+}
+
+.app-dark .text-gray-700 {
+    color: #e2e2e8;
+}
+
+.app-dark .text-gray-600 {
+    color: #c4c4cc;
+}
+
+.app-dark .text-gray-500 {
+    color: var(--app-muted);
+}
+
+.app-dark .text-gray-400 {
+    color: #7d7d86;
+}
+
+.app-dark .text-blue-500 {
+    color: #e9e9ee;
+}
+
+.app-dark .text-blue-600 {
+    color: var(--app-red-bright);
+}
+
+.app-dark .text-blue-700 {
+    color: #9db2ff;
+}
+
+.app-dark .text-red-500 {
+    color: #ff5f5f;
+}
+
+.app-dark .text-red-600,
+.app-dark .text-red-700 {
+    color: #ff7171;
+}
+
+.app-dark .text-green-600,
+.app-dark .text-green-700 {
+    color: var(--app-ok);
+}
+
+.app-dark .text-yellow-600 {
+    color: var(--app-warn);
+}
+
+.app-dark .text-purple-700 {
+    color: #d8b4fe;
+}
+
+.app-dark .hover\:text-blue-700:hover {
+    color: var(--app-red-bright);
+}
+
+.app-dark .hover\:text-gray-700:hover {
+    color: #fff;
+}
+
+.app-dark .hover\:text-red-700:hover {
+    color: #ff9090;
+}
+
+/* ---------- Bordes ---------- */
+
+.app-dark th,
+.app-dark tr {
+    border-color: var(--app-line);
+}
+
+.app-dark td {
+    border-color: var(--app-line-soft);
+}
+
+.app-dark .border-gray-200 {
+    border-color: var(--app-line);
+}
+
+.app-dark .border-gray-300 {
+    border-color: #33333a;
+}
+
+.app-dark .divide-gray-200 > :not(:last-child) {
+    border-color: var(--app-line-soft);
+}
+
+/* ---------- Tablas ---------- */
+
+.app-dark thead th {
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--app-muted);
+}
+
+.app-dark tbody td {
+    color: #e2e2e8;
+}
+
+.app-dark tbody tr {
+    transition: background 0.15s ease;
+}
+
+/* ---------- Botones ---------- */
+
+.app-dark .bg-blue-600 {
+    background-color: var(--app-red);
+}
+
+.app-dark .hover\:bg-blue-700:hover {
+    background-color: #e4172a;
+}
+
+.app-dark .bg-red-500 {
+    background-color: var(--app-red);
+}
+
+.app-dark .hover\:bg-red-600:hover {
+    background-color: #e4172a;
+}
+
+/* ---------- Badges / estados ---------- */
+
+.app-dark .bg-green-100 {
+    background-color: rgba(53, 208, 127, 0.1);
+}
+
+.app-dark .bg-red-100 {
+    background-color: rgba(210, 13, 30, 0.12);
+}
+
+.app-dark .bg-yellow-100 {
+    background-color: rgba(245, 176, 46, 0.1);
+}
+
+.app-dark .bg-blue-100 {
+    background-color: rgba(110, 140, 255, 0.12);
+}
+
+.app-dark .bg-purple-100 {
+    background-color: rgba(168, 85, 247, 0.12);
+}
+
+/* ---------- Formularios ---------- */
+
+.app-dark input,
+.app-dark select,
+.app-dark textarea {
+    background-color: #0b0b0d;
+    border-color: #33333a;
+    color: var(--app-text);
+    color-scheme: dark;
+}
+
+.app-dark input::placeholder,
+.app-dark textarea::placeholder {
+    color: #6a6a72;
+}
+
+.app-dark .focus\:ring-blue-500:focus {
+    --tw-ring-color: rgba(210, 13, 30, 0.45);
+}
+
+/* ---------- Hero del dashboard (rueda ITAL FIAT) ---------- */
+
+.app-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: center;
+    gap: 32px;
+    padding: 4px 0 36px;
+}
+
+.app-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    color: var(--app-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.app-eyebrow .tick {
+    display: inline-block;
+    width: 26px;
+    height: 3px;
+    background: var(--app-red);
+    box-shadow: 0 0 10px rgba(210, 13, 30, 0.8);
+}
+
+.app-hero-title {
+    margin: 0;
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.app-hero-title .accent {
+    color: var(--app-red-bright);
+    text-shadow: 0 0 34px rgba(210, 13, 30, 0.55);
+}
+
+.app-hero-lead {
+    max-width: 520px;
+    margin: 18px 0 0;
+    color: var(--app-muted);
+    font-size: 14.5px;
+    line-height: 1.6;
+}
+
+.app-wheel {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 250px;
+}
+
+.app-gear {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 290px;
+    height: 290px;
+    color: rgba(210, 13, 30, 0.42);
+    animation: app-spin 30s linear infinite;
+}
+
+@keyframes app-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.app-stamp {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    border: 2px solid var(--app-red);
+    background: radial-gradient(circle at 50% 35%, rgba(210, 13, 30, 0.22), rgba(7, 7, 8, 0.95) 70%);
+    box-shadow: 0 0 0 6px rgba(210, 13, 30, 0.08), 0 0 40px rgba(210, 13, 30, 0.25);
+    text-align: center;
+}
+
+.app-stamp strong {
+    display: block;
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: 26px;
+    line-height: 0.9;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.app-stamp span {
+    display: block;
+    margin-top: 7px;
+    font-size: 8.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--app-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-gear {
+        animation: none;
+    }
+}
+
+/* ---------- Login ---------- */
+
+.app-login-main {
+    display: grid;
+    place-items: center;
+    min-height: calc(100vh - 5px);
+    padding: 48px 20px;
+}
+
+.app-login-card {
+    width: 100%;
+    max-width: 430px;
+    padding: 26px 28px 22px;
+    border-top: 3px solid var(--app-red);
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--app-panel-2), var(--app-panel));
+    outline: 1px solid var(--app-line);
+    outline-offset: -1px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+
+.app-login .app-wheel {
+    height: 200px;
+    margin-bottom: 4px;
+}
+
+.app-login .app-gear {
+    width: 200px;
+    height: 200px;
+}
+
+.app-login .app-stamp {
+    width: 112px;
+    height: 112px;
+}
+
+.app-login .app-stamp strong {
+    font-size: 21px;
+}
+
+.app-login .app-stamp span {
+    font-size: 7.5px;
+    letter-spacing: 0.26em;
+}
+
+.app-eyebrow-center {
+    justify-content: center;
+}
+
+.app-login-title {
+    margin: 0;
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.app-login-title .accent {
+    color: var(--app-red-bright);
+    text-shadow: 0 0 30px rgba(210, 13, 30, 0.5);
+}
+
+.app-login-lead {
+    max-width: 320px;
+    margin: 10px auto 0;
+    color: var(--app-muted);
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+.app-login-form {
+    margin-top: 22px;
+    text-align: left;
+}
+
+.app-field {
+    margin-bottom: 14px;
+}
+
+.app-field label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--app-muted);
+}
+
+.app-field-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.app-field-row label {
+    margin-bottom: 7px;
+}
+
+.app-field input {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid #33333a;
+    border-radius: 4px;
+    background: #0b0b0d;
+    color: var(--app-text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.app-field input::placeholder {
+    color: #6a6a72;
+}
+
+.app-field input:focus {
+    border-color: var(--app-red);
+    box-shadow: 0 0 0 3px rgba(210, 13, 30, 0.15);
+}
+
+/* ---------- TASK-8: errores por campo en el Login ---------- */
+
+.app-field input.is-invalid {
+    border-color: var(--app-red);
+    box-shadow: 0 0 0 3px rgba(210, 13, 30, 0.18);
+}
+
+.app-field input.is-invalid:focus {
+    border-color: var(--app-red-bright);
+    box-shadow: 0 0 0 3px rgba(210, 13, 30, 0.28);
+}
+
+.app-field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 7px 0 0;
+    color: #ff8a8a;
+    font-size: 11.5px;
+    line-height: 1.45;
+    text-align: left;
+}
+
+.app-field-error::before {
+    content: "!";
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    margin-top: 1px;
+    border: 1px solid rgba(210, 13, 30, 0.55);
+    border-radius: 50%;
+    background: rgba(210, 13, 30, 0.18);
+    color: #ff8a8a;
+    font-size: 9.5px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.app-login-link {
+    margin-bottom: 7px;
+    color: #ff7a7a;
+    font-size: 10.5px;
+    text-decoration: none;
+}
+
+.app-login-link:hover {
+    text-decoration: underline;
+}
+
+.app-login-error {
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(210, 13, 30, 0.45);
+    border-radius: 4px;
+    background: rgba(210, 13, 30, 0.12);
+    color: #ff8a8a;
+    font-size: 12.5px;
+    text-align: left;
+}
+
+.app-login-btn {
+    width: 100%;
+    height: 46px;
+    margin-top: 6px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--app-red);
+    color: #fff;
+    font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 10px 26px rgba(210, 13, 30, 0.32);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: filter 0.15s ease;
+}
+
+.app-login-btn:hover {
+    filter: brightness(1.12);
+}
+
+.app-login-foot {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--app-line);
+    color: var(--app-muted);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1120px) {
+    .app-header-inner {
+        flex-wrap: wrap;
+        height: auto;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        row-gap: 8px;
+    }
+
+    .app-nav {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
+
+    .app-nav::-webkit-scrollbar {
+        height: 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .app-hero {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding-bottom: 28px;
+    }
+
+    .app-wheel {
+        height: 210px;
+    }
+
+    .app-gear {
+        width: 230px;
+        height: 230px;
+    }
+
+    .app-stamp {
+        width: 122px;
+        height: 122px;
+    }
+
+    .app-stamp strong {
+        font-size: 21px;
+    }
+}
+
+@media (max-width: 720px) {
+    .app-wrap {
+        padding: 0 16px;
+    }
+
+    .app-user-meta {
+        display: none;
+    }
+
+    .app-brand-text small {
+        display: none;
+    }
+
+    .app-main {
+        padding-top: 24px;
+    }
+
+    .app-footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}

@@ -1,76 +1,79 @@
+@use('App\Models\User')
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ITAL FIAT - Sistema de Gestión</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('titulo_pagina', 'ITAL FIAT')</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
+<body class="app-dark h-full">
 
-    <!-- 1. SIDEBAR (MENÚ LATERAL) -->
-    <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex">
-        <!-- Logo -->
-        <div class="h-16 flex items-center justify-center border-b border-slate-800">
-            <h1 class="text-xl font-bold tracking-wider text-blue-400">ITAL FIAT</h1>
+    <div class="app-strip" aria-hidden="true"></div>
+
+    <header class="app-header">
+        <div class="app-wrap app-header-inner">
+            <a href="{{ url('/') }}" class="app-brand">
+                <span class="app-brand-mark">IF</span>
+                <span class="app-brand-text">
+                    <strong>ITAL FIAT</strong>
+                    <small>Repuestos &amp; Stock</small>
+                </span>
+            </a>
+
+            <nav class="app-nav">
+                <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'is-active' : '' }}">Dashboard</a>
+                <a href="{{ url('/productos') }}" class="{{ request()->is('productos*') ? 'is-active' : '' }}">Productos</a>
+                <a href="{{ url('/stock') }}" class="{{ request()->is('stock*') ? 'is-active' : '' }}">Stock</a>
+
+                @if (auth()->user()?->hasAnyRole(User::ROLE_ADMIN, User::ROLE_DEPOSITO))
+                    <a href="{{ url('/pedidos') }}" class="{{ request()->is('pedidos*') ? 'is-active' : '' }}">Pedidos</a>
+                @endif
+
+                @if (auth()->user()?->hasAnyRole(User::ROLE_ADMIN, User::ROLE_VENDEDOR))
+                    <a href="{{ url('/ventas') }}" class="{{ request()->is('ventas*') ? 'is-active' : '' }}">Ventas</a>
+                    <a href="{{ url('/clientes') }}" class="{{ request()->is('clientes*') ? 'is-active' : '' }}">Clientes</a>
+                @endif
+
+                @if (auth()->user()?->isAdmin())
+                    <a href="{{ url('/reportes') }}" class="{{ request()->is('reportes*') ? 'is-active' : '' }}">Reportes</a>
+                    <a href="{{ url('/usuarios') }}" class="{{ request()->is('usuarios*') ? 'is-active' : '' }}">Usuarios</a>
+                @endif
+            </nav>
+
+            <div class="app-header-right">
+                <div class="app-user">
+                    <span class="app-avatar">{{ collect(explode(' ', str_replace(',', '', auth()->user()->name ?? 'Usuario')))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('') }}</span>
+                    <span class="app-user-meta">
+                        <strong>{{ auth()->user()->name ?? 'Usuario' }}</strong>
+                        <small>{{ auth()->user()?->roleLabel() ?? 'Usuario' }}</small>
+                    </span>
+                </div>
+
+                <form action="{{ url('/logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="app-logout">Salir</button>
+                </form>
+            </div>
         </div>
+    </header>
 
-        <!-- Navegación -->
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            <a href="{{ url('/') }}" class="flex items-center gap-3 px-4 py-3 bg-blue-600 rounded-lg text-white transition">
-                <span>📊</span> Dashboard
-            </a>
-            <a href="{{ url('/productos') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
-                <span>📦</span> Productos (repuestos)
-            </a>
-            <a href="{{ url('/stock') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
-                <span>📉</span> Control de Stock
-            </a>
-            <a href="{{ url('/pedidos') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
-                <span>🚚</span> Pedidos a Proveedores
-            </a>
-            <a href="{{ url('/ventas') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
-                <span>💰</span> Ventas
-            </a>
-            <a href="{{ url('/clientes') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
-                <span>👥</span> Clientes
-            </a>
-            <a href="{{ url('/reportes') }}" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition">
-                <span>📄</span> Reportes
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-lg text-gray-300 hover:text-white transition mt-auto border-t border-slate-800 pt-4">
-                <span>⚙️</span> Usuarios y Roles
-            </a>
-        </nav>
-    </aside>
+    <main class="app-wrap app-main">
+        @yield('content')
+    </main>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="flex-1 flex flex-col h-screen overflow-hidden">
-        
-        <!-- 2. NAVBAR (BARRA SUPERIOR) -->
-        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6">
-            <div class="flex items-center gap-4">
-                <button class="md:hidden text-gray-500">☰</button>
-                <h2 class="text-lg font-semibold text-gray-700">@yield('titulo_pagina', 'Panel de Control')</h2>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <p class="text-sm font-bold text-gray-800">Soria, Sergio</p>
-                    <p class="text-xs text-blue-500 font-semibold">Administrador</p>
-                </div>
-                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                    SS
-                </div>
-                <a href="#" class="text-red-500 hover:text-red-700 text-sm font-semibold ml-2">Salir</a>
-            </div>
-        </header>
-
-        <!-- 3. ÁREA CENTRAL (AQUÍ SE CARGA EL CONTENIDO) -->
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-            @yield('content')
-        </main>
-    </div>
+    <footer class="app-footer">
+        <div class="app-wrap app-footer-inner">
+            <span><strong>ITAL FIAT</strong> · Formosa, Argentina</span>
+            <span>Sistema de gestión de repuestos</span>
+        </div>
+    </footer>
 
 </body>
 </html>

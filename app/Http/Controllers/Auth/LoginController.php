@@ -37,7 +37,8 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/');
+        // HU1: cada rol entra directo a su módulo.
+        return redirect($request->user()->homePath());
     }
 
     /**

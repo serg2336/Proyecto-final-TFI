@@ -17,6 +17,16 @@ class LoginTest extends TestCase
             'name' => 'Soria, Sergio',
             'email' => 'admin@italfiat.com',
             'password' => Hash::make('password'),
+            'role' => User::ROLE_ADMIN,
+        ]);
+    }
+
+    private function usuarioConRol(string $email, string $role): User
+    {
+        return User::factory()->create([
+            'email' => $email,
+            'password' => Hash::make('password'),
+            'role' => $role,
         ]);
     }
 
@@ -77,5 +87,53 @@ class LoginTest extends TestCase
             ->assertRedirect('/login');
 
         $this->assertGuest();
+    }
+
+    /** HU1: el vendedor entra directo a su módulo. */
+    public function test_vendedor_es_redirigido_a_ventas(): void
+    {
+        $this->usuarioConRol('vendedor@italfiat.com', User::ROLE_VENDEDOR);
+
+        $this->post('/login', [
+            'email' => 'vendedor@italfiat.com',
+            'password' => 'password',
+        ])->assertRedirect('/ventas');
+
+        $this->assertAuthenticated();
+    }
+
+    /** HU1: el encargado de depósito entra directo a stock. */
+    public function test_deposito_es_redirigido_a_stock(): void
+    {
+        $this->usuarioConRol('deposito@italfiat.com', User::ROLE_DEPOSITO);
+
+        $this->post('/login', [
+            'email' => 'deposito@italfiat.com',
+            'password' => 'password',
+        ])->assertRedirect('/stock');
+
+        $this->assertAuthenticated();
+    }
+
+    /** HU1: si el rol no se reconoce, no se rompe el login. */
+    public function test_rol_desconocido_cae_al_dashboard(): void
+    {
+        $this->usuarioConRol('otro@italfiat.com', 'otro');
+
+        $this->post('/login', [
+            'email' => 'otro@italfiat.com',
+            'password' => 'password',
+        ])->assertRedirect('/');
+
+        $this->assertAuthenticated();
+    }
+
+    /** El layout muestra el rol real del usuario autenticado. */
+    public function test_dashboard_muestra_el_rol_del_usuario(): void
+    {
+        $this->actingAs($this->admin())
+            ->get('/')
+            ->assertOk()
+            ->assertSee('Administrador');
     }
 }

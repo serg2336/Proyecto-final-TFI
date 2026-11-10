@@ -25,6 +25,7 @@ class LoginViewTest extends TestCase
             'name' => 'Soria, Sergio',
             'email' => 'admin@italfiat.com',
             'password' => Hash::make('password'),
+            'role' => User::ROLE_ADMIN,
         ]);
     }
 

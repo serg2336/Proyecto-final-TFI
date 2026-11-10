@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +16,34 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Soria, Sergio',
-            'email' => 'admin@italfiat.com',
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@italfiat.com'],
+            [
+                'name' => 'Soria, Sergio',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_ADMIN,
+            ],
+        );
+
+        // Asegura el rol aunque el usuario ya existiera de antes.
+        $admin->update(['role' => User::ROLE_ADMIN]);
+
+        User::firstOrCreate(
+            ['email' => 'vendedor@italfiat.com'],
+            [
+                'name' => 'Vendedor Demo',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_VENDEDOR,
+            ],
+        );
+
+        User::firstOrCreate(
+            ['email' => 'deposito@italfiat.com'],
+            [
+                'name' => 'Depósito Demo',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_DEPOSITO,
+            ],
+        );
     }
 }

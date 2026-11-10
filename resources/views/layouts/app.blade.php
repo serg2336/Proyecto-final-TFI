@@ -41,7 +41,7 @@
                     <span class="app-avatar">{{ collect(explode(' ', str_replace(',', '', auth()->user()->name ?? 'Usuario')))->map(fn ($p) => mb_substr($p, 0, 1))->take(2)->implode('') }}</span>
                     <span class="app-user-meta">
                         <strong>{{ auth()->user()->name ?? 'Usuario' }}</strong>
-                        <small>Administrador</small>
+                        <small>{{ auth()->user()?->roleLabel() ?? 'Usuario' }}</small>
                     </span>
                 </div>
 

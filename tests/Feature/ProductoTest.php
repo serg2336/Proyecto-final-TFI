@@ -23,6 +23,7 @@ class ProductoTest extends TestCase
         return User::factory()->create([
             'name' => 'Soria, Sergio',
             'email' => 'admin@italfiat.com',
+            'role' => User::ROLE_ADMIN,
         ]);
     }
 

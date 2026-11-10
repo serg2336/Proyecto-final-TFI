@@ -63,7 +63,52 @@ class ProductoTest extends TestCase
 
         $this->get('/productos')
             ->assertOk()
-            ->assertSee('No hay productos cargados todavía');
+            ->assertSee('Todavía no hay productos')
+            ->assertSee('Cuando agregues el primero, va a aparecer acá')
+            ->assertSee('Sin marcas registradas');
+    }
+
+    public function test_busca_por_codigo_o_descripcion(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->producto(['codigo' => 'FIL-001', 'descripcion' => 'Filtro de aceite']);
+        $this->producto(['codigo' => 'PAS-002', 'descripcion' => 'Pastillas de freno']);
+
+        $this->get('/productos?buscar=filtro')
+            ->assertOk()
+            ->assertSee('FIL-001')
+            ->assertDontSee('PAS-002');
+
+        $this->get('/productos?buscar=PAS-002')
+            ->assertOk()
+            ->assertSee('PAS-002')
+            ->assertDontSee('FIL-001');
+    }
+
+    public function test_filtra_por_marca(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->producto(['codigo' => 'FIA-001', 'marca' => 'Fiat']);
+        $this->producto(['codigo' => 'VW-001', 'marca' => 'Volkswagen']);
+
+        $this->get('/productos?marca=Volkswagen')
+            ->assertOk()
+            ->assertSee('VW-001')
+            ->assertDontSee('FIA-001');
+    }
+
+    public function test_muestra_estado_sin_resultados(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->producto();
+
+        $this->get('/productos?buscar=inexistente')
+            ->assertOk()
+            ->assertSee('No se encontraron resultados')
+            ->assertSee('Probá con otro término o revisá los filtros aplicados');
     }
 
     public function test_se_puede_crear_un_producto(): void
@@ -151,6 +196,38 @@ class ProductoTest extends TestCase
             ->assertViewHas('totalProductos', 2)
             ->assertViewHas('stockCritico', 1)
             ->assertSee('Repuesto en estado crítico')
-            ->assertDontSee('Repuesto con stock suficiente');
+            ->assertDontSee('Repuesto con stock suficiente')
+            ->assertSee('Cada producto, en su lugar.')
+            ->assertSee('Información precisa para decisiones precisas.');
+    }
+
+    public function test_stock_muestra_existencias_y_estados(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->producto(['codigo' => 'AGO-001', 'descripcion' => 'Repuesto agotado', 'stock' => 0]);
+        $this->producto(['codigo' => 'BAJ-001', 'descripcion' => 'Repuesto con pocas unidades', 'stock' => 2, 'stock_minimo' => 5]);
+        $this->producto(['codigo' => 'DIS-001', 'descripcion' => 'Repuesto disponible', 'stock' => 10, 'stock_minimo' => 5]);
+
+        $this->get('/stock')
+            ->assertOk()
+            ->assertSee('Stock actual')
+            ->assertSee('Revisá existencias y detectá faltantes')
+            ->assertSee('Repuesto agotado')
+            ->assertSee('Sin stock')
+            ->assertSee('Stock bajo')
+            ->assertSee('Disponible')
+            ->assertSee('Este producto no tiene unidades disponibles')
+            ->assertSee('Quedan pocas unidades. Revisá el umbral de reposición');
+    }
+
+    public function test_stock_muestra_estado_vacio(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->get('/stock')
+            ->assertOk()
+            ->assertSee('Todavía no hay productos')
+            ->assertSee('Cuando agregues el primero, va a aparecer acá');
     }
 }

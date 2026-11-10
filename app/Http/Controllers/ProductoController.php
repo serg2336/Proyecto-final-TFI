@@ -7,11 +7,33 @@ use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    // 1. Mostrar la lista de productos
-    public function index()
+    // 1. Mostrar la lista de productos (con buscador y filtro por marca)
+    public function index(Request $request)
     {
-        $productos = Producto::all();
-        return view('productos', compact('productos'));
+        $buscar = $request->query('buscar');
+        $buscar = is_string($buscar) ? trim($buscar) : '';
+
+        $marca = $request->query('marca');
+        $marca = is_string($marca) ? trim($marca) : '';
+
+        $productos = Producto::query()
+            ->when($buscar !== '', function ($query) use ($buscar) {
+                $query->where(function ($query) use ($buscar) {
+                    $query->where('codigo', 'like', "%{$buscar}%")
+                        ->orWhere('descripcion', 'like', "%{$buscar}%");
+                });
+            })
+            ->when($marca !== '', fn ($query) => $query->where('marca', $marca))
+            ->orderBy('descripcion')
+            ->get();
+
+        $marcas = Producto::query()
+            ->select('marca')
+            ->distinct()
+            ->orderBy('marca')
+            ->pluck('marca');
+
+        return view('productos', compact('productos', 'marcas'));
     }
 
     // 2. Guardar un producto nuevo

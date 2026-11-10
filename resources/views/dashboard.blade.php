@@ -9,7 +9,8 @@
             <p class="app-eyebrow"><span class="tick"></span>Panel de control · Inventario</p>
             <h1 class="app-hero-title">Panel de<br><span class="accent">Control</span></h1>
             <p class="app-hero-lead">
-                Resumen general del sistema de repuestos: stock, pedidos y ventas en un solo lugar.
+                Cada producto, en su lugar.<br>
+                Información precisa para decisiones precisas.
             </p>
         </div>
 

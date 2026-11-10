@@ -30,7 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
 
     Route::get('/stock', function () {
-        return view('stock');
+        $productos = Producto::query()->orderBy('stock')->orderBy('descripcion')->get();
+
+        return view('stock', compact('productos'));
     });
 
     Route::get('/pedidos', function () {

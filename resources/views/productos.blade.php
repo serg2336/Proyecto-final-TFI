@@ -6,8 +6,8 @@
     <!-- Encabezado con botón de crear -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h3 class="text-2xl font-bold text-gray-800">Catálogo de Repuestos</h3>
-            <p class="text-gray-500 text-sm">Administrá el stock, precios y marcas de tus productos.</p>
+            <h3 class="text-2xl font-bold text-gray-800">Productos</h3>
+            <p class="text-gray-500 text-sm">Administrá el catálogo, sus precios y disponibilidad.</p>
         </div>
         <button onclick="toggleModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition flex items-center gap-2">
             <span>➕</span> Nuevo Producto
@@ -21,20 +21,34 @@
     @endif
 
     <!-- Barra de Búsqueda y Filtros -->
-    <div class="bg-white p-4 rounded-lg shadow mb-6 flex gap-4">
-        <input type="text" placeholder="Buscar por código o descripción..." class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-        
-        <select class="w-full md:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-            <option>Todas las Marcas</option>
-            <option>Fiat</option>
-            <option>Volkswagen</option>
-            <option>Ford</option>
+    <form method="GET" action="{{ route('productos.index') }}" class="bg-white p-4 rounded-lg shadow mb-6 flex flex-wrap gap-4">
+        <input
+            type="search"
+            name="buscar"
+            value="{{ request('buscar') }}"
+            placeholder="Buscar por código o descripción..."
+            class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+
+        <select name="marca" class="w-full md:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">Todas las marcas</option>
+            @forelse($marcas as $marca)
+                <option value="{{ $marca }}" @selected(request('marca') === $marca)>{{ $marca }}</option>
+            @empty
+                <option value="" disabled>Sin marcas registradas</option>
+            @endforelse
         </select>
 
-        <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded transition">
+        <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded transition">
             Filtrar
         </button>
-    </div>
+
+        @if (request()->filled('buscar') || request()->filled('marca'))
+            <a href="{{ route('productos.index') }}" class="text-sm text-gray-500 hover:text-gray-700 self-center underline">
+                Limpiar filtros
+            </a>
+        @endif
+    </form>
 
     <!-- Tabla de Productos -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -44,7 +58,7 @@
                     <th class="py-4 px-6 border-b">Código</th>
                     <th class="py-4 px-6 border-b">Descripción</th>
                     <th class="py-4 px-6 border-b">Marca / Modelo</th>
-                    <th class="py-4 px-6 border-b">Precio Venta</th>
+                    <th class="py-4 px-6 border-b">Precio</th>
                     <th class="py-4 px-6 border-b">Stock</th>
                     <th class="py-4 px-6 border-b text-center">Acciones</th>
                 </tr>
@@ -53,14 +67,19 @@
                 @forelse($productos as $producto)
                 <tr class="hover:bg-gray-50 border-b">
                     <td class="py-4 px-6 font-mono text-sm">{{ $producto->codigo }}</td>
-                    <td class="py-4 px-6 font-semibold">{{ $producto->descripcion }}</td>
+                    <td class="py-4 px-6 font-semibold">
+                        {{ $producto->descripcion }}
+                        <div class="text-xs text-gray-400 font-normal">Actualizado {{ $producto->updated_at->locale('es')->diffForHumans() }}</div>
+                    </td>
                     <td class="py-4 px-6">
                         {{ $producto->marca }}@if($producto->modelo) / {{ $producto->modelo }}@endif
                     </td>
                     <td class="py-4 px-6">$ {{ number_format($producto->precio, 2, ',', '.') }}</td>
                     <td class="py-4 px-6">
-                        @if($producto->stock <= $producto->stock_minimo)
-                            <span class="text-red-600 bg-red-100 px-2 py-1 rounded text-xs font-bold">{{ $producto->stock }} un.</span>
+                        @if($producto->stock === 0)
+                            <span class="text-red-600 bg-red-100 px-2 py-1 rounded text-xs font-bold" title="Este producto no tiene unidades disponibles.">Sin stock</span>
+                        @elseif($producto->stock <= $producto->stock_minimo)
+                            <span class="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs font-bold" title="Quedan pocas unidades. Revisá el umbral de reposición.">Stock bajo ({{ $producto->stock }} un.)</span>
                         @else
                             <span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">{{ $producto->stock }} un.</span>
                         @endif
@@ -78,7 +97,13 @@
                 @empty
                 <tr>
                     <td colspan="6" class="py-10 px-6 text-center text-gray-500">
-                        No hay productos cargados todavía. Usá el botón <span class="font-semibold">Nuevo Producto</span> para agregar el primero.
+                        @if (request()->filled('buscar') || request()->filled('marca'))
+                            <p class="font-semibold text-gray-700">No se encontraron resultados</p>
+                            <p class="text-sm">Probá con otro término o revisá los filtros aplicados.</p>
+                        @else
+                            <p class="font-semibold text-gray-700">Todavía no hay productos</p>
+                            <p class="text-sm">Cuando agregues el primero, va a aparecer acá.</p>
+                        @endif
                     </td>
                 </tr>
                 @endforelse

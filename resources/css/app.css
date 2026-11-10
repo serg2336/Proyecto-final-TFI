@@ -280,7 +280,6 @@ body.app-dark {
 
 .app-dark .bg-white {
     background: linear-gradient(180deg, var(--app-panel-2), var(--app-panel));
-    /* outline en vez de border para no pisar los acentos (border-l-4, border-t-4, etc.) */
     outline: 1px solid var(--app-line);
     outline-offset: -1px;
 }
@@ -320,71 +319,24 @@ body.app-dark {
 
 /* ---------- Textos ---------- */
 
-.app-dark .text-gray-800 {
-    color: var(--app-text);
-}
-
-.app-dark .text-gray-700 {
-    color: #e2e2e8;
-}
-
-.app-dark .text-gray-600 {
-    color: #c4c4cc;
-}
-
-.app-dark .text-gray-500 {
-    color: var(--app-muted);
-}
-
-.app-dark .text-gray-400 {
-    color: #7d7d86;
-}
-
-.app-dark .text-blue-500 {
-    color: #e9e9ee;
-}
-
-.app-dark .text-blue-600 {
-    color: var(--app-red-bright);
-}
-
-.app-dark .text-blue-700 {
-    color: #9db2ff;
-}
-
-.app-dark .text-red-500 {
-    color: #ff5f5f;
-}
-
+.app-dark .text-gray-800 { color: var(--app-text); }
+.app-dark .text-gray-700 { color: #e2e2e8; }
+.app-dark .text-gray-600 { color: #c4c4cc; }
+.app-dark .text-gray-500 { color: var(--app-muted); }
+.app-dark .text-gray-400 { color: #7d7d86; }
+.app-dark .text-blue-500 { color: #e9e9ee; }
+.app-dark .text-blue-600 { color: var(--app-red-bright); }
+.app-dark .text-blue-700 { color: #9db2ff; }
+.app-dark .text-red-500 { color: #ff5f5f; }
 .app-dark .text-red-600,
-.app-dark .text-red-700 {
-    color: #ff7171;
-}
-
+.app-dark .text-red-700 { color: #ff7171; }
 .app-dark .text-green-600,
-.app-dark .text-green-700 {
-    color: var(--app-ok);
-}
-
-.app-dark .text-yellow-600 {
-    color: var(--app-warn);
-}
-
-.app-dark .text-purple-700 {
-    color: #d8b4fe;
-}
-
-.app-dark .hover\:text-blue-700:hover {
-    color: var(--app-red-bright);
-}
-
-.app-dark .hover\:text-gray-700:hover {
-    color: #fff;
-}
-
-.app-dark .hover\:text-red-700:hover {
-    color: #ff9090;
-}
+.app-dark .text-green-700 { color: var(--app-ok); }
+.app-dark .text-yellow-600 { color: var(--app-warn); }
+.app-dark .text-purple-700 { color: #d8b4fe; }
+.app-dark .hover\:text-blue-700:hover { color: var(--app-red-bright); }
+.app-dark .hover\:text-gray-700:hover { color: #fff; }
+.app-dark .hover\:text-red-700:hover { color: #ff9090; }
 
 /* ---------- Bordes ---------- */
 
@@ -397,17 +349,9 @@ body.app-dark {
     border-color: var(--app-line-soft);
 }
 
-.app-dark .border-gray-200 {
-    border-color: var(--app-line);
-}
-
-.app-dark .border-gray-300 {
-    border-color: #33333a;
-}
-
-.app-dark .divide-gray-200 > :not(:last-child) {
-    border-color: var(--app-line-soft);
-}
+.app-dark .border-gray-200 { border-color: var(--app-line); }
+.app-dark .border-gray-300 { border-color: #33333a; }
+.app-dark .divide-gray-200 > :not(:last-child) { border-color: var(--app-line-soft); }
 
 /* ---------- Tablas ---------- */
 
@@ -429,43 +373,18 @@ body.app-dark {
 
 /* ---------- Botones ---------- */
 
-.app-dark .bg-blue-600 {
-    background-color: var(--app-red);
-}
-
-.app-dark .hover\:bg-blue-700:hover {
-    background-color: #e4172a;
-}
-
-.app-dark .bg-red-500 {
-    background-color: var(--app-red);
-}
-
-.app-dark .hover\:bg-red-600:hover {
-    background-color: #e4172a;
-}
+.app-dark .bg-blue-600 { background-color: var(--app-red); }
+.app-dark .hover\:bg-blue-700:hover { background-color: #e4172a; }
+.app-dark .bg-red-500 { background-color: var(--app-red); }
+.app-dark .hover\:bg-red-600:hover { background-color: #e4172a; }
 
 /* ---------- Badges / estados ---------- */
 
-.app-dark .bg-green-100 {
-    background-color: rgba(53, 208, 127, 0.1);
-}
-
-.app-dark .bg-red-100 {
-    background-color: rgba(210, 13, 30, 0.12);
-}
-
-.app-dark .bg-yellow-100 {
-    background-color: rgba(245, 176, 46, 0.1);
-}
-
-.app-dark .bg-blue-100 {
-    background-color: rgba(110, 140, 255, 0.12);
-}
-
-.app-dark .bg-purple-100 {
-    background-color: rgba(168, 85, 247, 0.12);
-}
+.app-dark .bg-green-100 { background-color: rgba(53, 208, 127, 0.1); }
+.app-dark .bg-red-100 { background-color: rgba(210, 13, 30, 0.12); }
+.app-dark .bg-yellow-100 { background-color: rgba(245, 176, 46, 0.1); }
+.app-dark .bg-blue-100 { background-color: rgba(110, 140, 255, 0.12); }
+.app-dark .bg-purple-100 { background-color: rgba(168, 85, 247, 0.12); }
 
 /* ---------- Formularios ---------- */
 
@@ -559,9 +478,7 @@ body.app-dark {
 }
 
 @keyframes app-spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
 }
 
 .app-stamp {
@@ -596,9 +513,7 @@ body.app-dark {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .app-gear {
-        animation: none;
-    }
+    .app-gear { animation: none; }
 }
 
 /* ---------- Login ---------- */
@@ -638,14 +553,8 @@ body.app-dark {
     height: 112px;
 }
 
-.app-login .app-stamp strong {
-    font-size: 21px;
-}
-
-.app-login .app-stamp span {
-    font-size: 7.5px;
-    letter-spacing: 0.26em;
-}
+.app-login .app-stamp strong { font-size: 21px; }
+.app-login .app-stamp span { font-size: 7.5px; letter-spacing: 0.26em; }
 
 .app-eyebrow-center {
     justify-content: center;

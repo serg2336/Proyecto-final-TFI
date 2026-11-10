@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo('/login');
 
+        // Middleware de roles de Ramiro
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
         ]);

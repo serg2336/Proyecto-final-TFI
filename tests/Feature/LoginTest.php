@@ -39,7 +39,7 @@ class LoginTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('dashboard', absolute: false));
         $this->assertAuthenticatedAs(User::where('email', 'admin@italfiat.com')->first());
     }
 
@@ -84,7 +84,7 @@ class LoginTest extends TestCase
 
         $this->actingAs($user)
             ->post('/logout')
-            ->assertRedirect('/login');
+            ->assertRedirect('/');
 
         $this->assertGuest();
     }

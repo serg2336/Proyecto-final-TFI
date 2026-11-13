@@ -340,6 +340,38 @@ class ProductoTest extends TestCase
             ->assertDontSee('PAL-001');
     }
 
+    public function test_el_formulario_incluye_marcas_cargadas_por_otros_medios(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->producto(['codigo' => 'CHE-001', 'marca' => 'Chevrolet', 'modelo' => 'Corsa']);
+
+        $this->get('/productos')
+            ->assertOk()
+            ->assertSee('value="Chevrolet"', false);
+    }
+
+    public function test_vendedor_puede_editar_pero_no_eliminar(): void
+    {
+        $vendedor = User::factory()->create(['role' => User::ROLE_VENDEDOR]);
+        $producto = $this->producto();
+
+        $this->actingAs($vendedor)
+            ->put('/productos/'.$producto->id, [
+                'codigo' => $producto->codigo,
+                'descripcion' => 'Filtro de aceite editado por vendedor',
+                'marca' => $producto->marca,
+                'precio' => $producto->precio,
+                'stock' => $producto->stock,
+            ])->assertRedirect(route('productos.index'));
+
+        $this->actingAs($vendedor)
+            ->delete('/productos/'.$producto->id)
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('productos', ['id' => $producto->id]);
+    }
+
     public function test_vendedor_puede_crear_y_editar_productos(): void
     {
         $this->actingAs(User::factory()->create(['role' => User::ROLE_VENDEDOR]));

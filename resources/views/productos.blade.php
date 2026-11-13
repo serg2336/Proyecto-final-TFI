@@ -3,6 +3,15 @@
 @section('titulo_pagina', 'Gestión de Productos (Repuestos)')
 
 @section('content')
+    @php
+        $marcasFormulario = collect(['Fiat', 'Volkswagen', 'Ford'])
+            ->merge($marcas)
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+    @endphp
+
     <!-- Encabezado con botón de crear -->
     <div class="flex justify-between items-center mb-6">
         <div>
@@ -26,7 +35,7 @@
             type="search"
             name="buscar"
             value="{{ request('buscar') }}"
-            placeholder="Buscar por código o descripción..."
+            placeholder="Buscar por código, descripción o modelo..."
             class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
 
@@ -171,10 +180,10 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Marca</label>
-                        <select name="marca" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
-                            <option value="Fiat" @selected(old('marca') === 'Fiat')>Fiat</option>
-                            <option value="Volkswagen" @selected(old('marca') === 'Volkswagen')>Volkswagen</option>
-                            <option value="Ford" @selected(old('marca') === 'Ford')>Ford</option>
+                        <select name="marca" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                            @foreach ($marcasFormulario as $marcaFormulario)
+                                <option value="{{ $marcaFormulario }}" @selected(old('marca') === $marcaFormulario)>{{ $marcaFormulario }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div>
@@ -242,10 +251,10 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Marca</label>
-                        <select name="marca" id="editar-marca" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
-                            <option value="Fiat">Fiat</option>
-                            <option value="Volkswagen">Volkswagen</option>
-                            <option value="Ford">Ford</option>
+                        <select name="marca" id="editar-marca" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                            @foreach ($marcasFormulario as $marcaFormulario)
+                                <option value="{{ $marcaFormulario }}">{{ $marcaFormulario }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div>
@@ -291,7 +300,14 @@
             document.getElementById('editar-producto-id').value = datos.id;
             document.getElementById('editar-codigo').value = datos.codigo;
             document.getElementById('editar-descripcion').value = datos.descripcion;
-            document.getElementById('editar-marca').value = datos.marca;
+
+            // Si la marca del producto no está en la lista, la agregamos.
+            const selectMarca = document.getElementById('editar-marca');
+            if (![...selectMarca.options].some((opcion) => opcion.value === datos.marca)) {
+                selectMarca.add(new Option(datos.marca, datos.marca));
+            }
+            selectMarca.value = datos.marca;
+
             document.getElementById('editar-modelo').value = datos.modelo || '';
             document.getElementById('editar-precio').value = datos.precio;
             document.getElementById('editar-stock').value = datos.stock;

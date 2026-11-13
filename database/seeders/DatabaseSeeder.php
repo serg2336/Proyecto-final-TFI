@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-<<<<<<< HEAD
         $admin = User::firstOrCreate(
             ['email' => 'admin@italfiat.com'],
             [
@@ -46,12 +45,5 @@ class DatabaseSeeder extends Seeder
                 'role' => User::ROLE_DEPOSITO,
             ],
         );
-=======
-        User::factory()->create([
-            'name' => 'Soria, Sergio',
-            'email' => 'admin@italfiat.com',
-            'password' => Hash::make('password'),
-        ]);
->>>>>>> b9250cf4d4c3d27f7445291093ec889bf4f836d1
     }
 }

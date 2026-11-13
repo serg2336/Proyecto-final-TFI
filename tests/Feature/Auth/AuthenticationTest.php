@@ -27,7 +27,8 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        // El factory crea un vendedor, por lo que HU1 lo redirige a su módulo.
+        $response->assertRedirect('/ventas');
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

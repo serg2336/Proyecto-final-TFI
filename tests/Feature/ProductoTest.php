@@ -231,4 +231,139 @@ class ProductoTest extends TestCase
             ->assertSee('Todavía no hay productos')
             ->assertSee('Cuando agregues el primero, va a aparecer acá');
     }
+
+    public function test_el_listado_ofrece_editar_cada_producto(): void
+    {
+        $this->actingAs($this->admin());
+
+        $producto = $this->producto(['codigo' => 'EDI-001', 'descripcion' => 'Filtro de aire']);
+
+        $this->get('/productos')
+            ->assertOk()
+            ->assertSee('Editar')
+            ->assertSee('modalEditarProducto', false)
+            ->assertSee('data-id="'.$producto->id.'"', false)
+            ->assertSee('data-codigo="EDI-001"', false);
+    }
+
+    public function test_se_puede_editar_un_producto(): void
+    {
+        $this->actingAs($this->admin());
+
+        $producto = $this->producto();
+
+        $this->put('/productos/'.$producto->id, [
+            'codigo' => 'REP-001',
+            'descripcion' => 'Filtro de aceite premium',
+            'marca' => 'Fiat',
+            'modelo' => 'Siena',
+            'precio' => 15900.75,
+            'stock' => 8,
+            'stock_minimo' => 4,
+        ])
+            ->assertRedirect(route('productos.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('productos', [
+            'id' => $producto->id,
+            'descripcion' => 'Filtro de aceite premium',
+            'modelo' => 'Siena',
+            'stock' => 8,
+            'stock_minimo' => 4,
+        ]);
+    }
+
+    public function test_editar_conserva_el_mismo_codigo(): void
+    {
+        $this->actingAs($this->admin());
+
+        $producto = $this->producto(['codigo' => 'REP-001']);
+
+        $this->put('/productos/'.$producto->id, [
+            'codigo' => 'REP-001',
+            'descripcion' => 'Filtro de aceite actualizado',
+            'marca' => 'Fiat',
+            'precio' => 13000,
+            'stock' => 10,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('productos', [
+            'id' => $producto->id,
+            'descripcion' => 'Filtro de aceite actualizado',
+        ]);
+    }
+
+    public function test_editar_rechaza_un_codigo_de_otro_producto(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->producto(['codigo' => 'REP-001']);
+        $producto = $this->producto(['codigo' => 'REP-002', 'descripcion' => 'Pastillas de freno']);
+
+        $this->put('/productos/'.$producto->id, [
+            'codigo' => 'REP-001',
+            'descripcion' => 'Pastillas de freno',
+            'marca' => 'Fiat',
+            'precio' => 1000,
+            'stock' => 1,
+        ])->assertSessionHasErrors('codigo');
+
+        $this->assertDatabaseHas('productos', [
+            'id' => $producto->id,
+            'codigo' => 'REP-002',
+        ]);
+    }
+
+    public function test_editar_valida_los_campos_obligatorios(): void
+    {
+        $this->actingAs($this->admin());
+
+        $producto = $this->producto();
+
+        $this->put('/productos/'.$producto->id, [])
+            ->assertSessionHasErrors(['codigo', 'descripcion', 'marca', 'precio', 'stock']);
+
+        $this->assertDatabaseHas('productos', ['id' => $producto->id, 'codigo' => 'REP-001']);
+    }
+
+    public function test_filtra_por_modelo(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->producto(['codigo' => 'PAL-001', 'marca' => 'Fiat', 'modelo' => 'Palio']);
+        $this->producto(['codigo' => 'SIE-001', 'marca' => 'Fiat', 'modelo' => 'Siena']);
+
+        $this->get('/productos?modelo=Siena')
+            ->assertOk()
+            ->assertSee('SIE-001')
+            ->assertDontSee('PAL-001');
+    }
+
+    public function test_vendedor_puede_crear_y_editar_productos(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_VENDEDOR]));
+
+        $this->post('/productos', [
+            'codigo' => 'VEN-001',
+            'descripcion' => 'Bujía NGK',
+            'marca' => 'Fiat',
+            'precio' => 3500,
+            'stock' => 12,
+        ])->assertRedirect(route('productos.index'));
+
+        $producto = Producto::where('codigo', 'VEN-001')->firstOrFail();
+
+        $this->put('/productos/'.$producto->id, [
+            'codigo' => 'VEN-001',
+            'descripcion' => 'Bujía NGK Iridium',
+            'marca' => 'Fiat',
+            'precio' => 4300,
+            'stock' => 10,
+        ])->assertRedirect(route('productos.index'));
+
+        $this->assertDatabaseHas('productos', [
+            'id' => $producto->id,
+            'descripcion' => 'Bujía NGK Iridium',
+        ]);
+    }
 }

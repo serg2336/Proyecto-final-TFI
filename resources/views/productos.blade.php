@@ -39,11 +39,20 @@
             @endforelse
         </select>
 
+        <select name="modelo" class="w-full md:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">Todos los modelos</option>
+            @forelse($modelos as $modelo)
+                <option value="{{ $modelo }}" @selected(request('modelo') === $modelo)>{{ $modelo }}</option>
+            @empty
+                <option value="" disabled>Sin modelos registrados</option>
+            @endforelse
+        </select>
+
         <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded transition">
             Filtrar
         </button>
 
-        @if (request()->filled('buscar') || request()->filled('marca'))
+        @if (request()->filled('buscar') || request()->filled('marca') || request()->filled('modelo'))
             <a href="{{ route('productos.index') }}" class="text-sm text-gray-500 hover:text-gray-700 self-center underline">
                 Limpiar filtros
             </a>
@@ -85,7 +94,19 @@
                         @endif
                     </td>
                     <td class="py-4 px-6 text-center space-x-2">
-                        <button class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Editar</button>
+                        <button
+                            type="button"
+                            class="text-blue-500 hover:text-blue-700 font-semibold text-sm"
+                            onclick="openEditModal(this)"
+                            data-id="{{ $producto->id }}"
+                            data-codigo="{{ $producto->codigo }}"
+                            data-descripcion="{{ $producto->descripcion }}"
+                            data-marca="{{ $producto->marca }}"
+                            data-modelo="{{ $producto->modelo }}"
+                            data-precio="{{ $producto->precio }}"
+                            data-stock="{{ $producto->stock }}"
+                            data-stock-minimo="{{ $producto->stock_minimo }}"
+                        >Editar</button>
                         <form action="{{ route('productos.destroy', $producto) }}" method="POST" class="inline"
                               onsubmit="return confirm('¿Eliminar el producto {{ $producto->codigo }}?')">
                             @csrf
@@ -168,6 +189,10 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Inicial</label>
                         <input type="number" name="stock" value="{{ old('stock') }}" min="0" placeholder="Ej: 10" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
                     </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Mínimo</label>
+                        <input type="number" name="stock_minimo" value="{{ old('stock_minimo', 5) }}" min="0" placeholder="Ej: 5" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
+                    </div>
                 </div>
 
                 <!-- Botones del Formulario -->
@@ -183,16 +208,113 @@
         </div>
     </div>
 
-    <!-- Script para abrir y cerrar el modal -->
+    <!-- MODAL DE EDICIÓN DE PRODUCTO (Oculto por defecto) -->
+    <div id="modalEditarProducto" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 class="text-xl font-bold text-gray-800">Editar Repuesto</h3>
+                <button onclick="toggleModal('modalEditarProducto')" class="text-gray-500 hover:text-red-500 text-2xl font-bold">&times;</button>
+            </div>
+
+            <form id="formEditarProducto" action="{{ route('productos.update', ['producto' => '__ID__']) }}" method="POST" class="mt-4">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="producto_id" id="editar-producto-id" value="{{ old('producto_id') }}">
+
+                @if ($errors->any())
+                    <div class="mb-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Código del Repuesto</label>
+                        <input type="text" name="codigo" id="editar-codigo" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Descripción</label>
+                        <input type="text" name="descripcion" id="editar-descripcion" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Marca</label>
+                        <select name="marca" id="editar-marca" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
+                            <option value="Fiat">Fiat</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Ford">Ford</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Modelo Compatible</label>
+                        <input type="text" name="modelo" id="editar-modelo" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Precio de Venta ($)</label>
+                        <input type="number" name="precio" id="editar-precio" step="0.01" min="0" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Stock</label>
+                        <input type="number" name="stock" id="editar-stock" min="0" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Mínimo</label>
+                        <input type="number" name="stock_minimo" id="editar-stock-minimo" min="0" class="w-full px-3 py-2 border rounded focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6 border-t pt-4">
+                    <button type="button" onclick="toggleModal('modalEditarProducto')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition shadow">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script para abrir y cerrar los modales -->
     <script>
-        function toggleModal() {
-            const modal = document.getElementById('modalNuevoProducto');
+        function toggleModal(id = 'modalNuevoProducto') {
+            const modal = document.getElementById(id);
             modal.classList.toggle('hidden');
         }
 
-        // Si la validación del backend falla, reabrimos el modal con los errores
+        function openEditModal(boton) {
+            const datos = boton.dataset;
+
+            document.getElementById('editar-producto-id').value = datos.id;
+            document.getElementById('editar-codigo').value = datos.codigo;
+            document.getElementById('editar-descripcion').value = datos.descripcion;
+            document.getElementById('editar-marca').value = datos.marca;
+            document.getElementById('editar-modelo').value = datos.modelo || '';
+            document.getElementById('editar-precio').value = datos.precio;
+            document.getElementById('editar-stock').value = datos.stock;
+            document.getElementById('editar-stock-minimo').value = datos.stockMinimo;
+
+            // La ruta de actualización necesita el ID del producto.
+            const form = document.getElementById('formEditarProducto');
+            form.action = form.action.replace('__ID__', datos.id);
+
+            toggleModal('modalEditarProducto');
+        }
+
+        // Si la validación del backend falla, reabrimos el modal con los errores.
         @if ($errors->any())
-            document.getElementById('modalNuevoProducto').classList.remove('hidden');
+            @if (old('producto_id'))
+                document.addEventListener('DOMContentLoaded', function () {
+                    const form = document.getElementById('formEditarProducto');
+                    form.action = '{{ route('productos.update', ['producto' => old('producto_id')]) }}';
+                    document.getElementById('modalEditarProducto').classList.remove('hidden');
+                });
+            @else
+                document.getElementById('modalNuevoProducto').classList.remove('hidden');
+            @endif
         @endif
     </script>
 @endsection

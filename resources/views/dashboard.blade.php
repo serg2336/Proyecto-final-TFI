@@ -85,24 +85,29 @@
                         </tr>
                     </thead>
                     <tbody class="text-gray-700">
-                        <tr class="hover:bg-gray-50 border-b">
-                            <td class="py-3 px-6">Filtro de Aceite Fiat</td>
-                            <td class="py-3 px-6"><span class="text-green-600 font-semibold bg-green-100 px-2 py-1 rounded text-xs">Ingreso</span></td>
-                            <td class="py-3 px-6">+ 20</td>
-                            <td class="py-3 px-6">Hoy, 10:30</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 border-b">
-                            <td class="py-3 px-6">Bujía NGK</td>
-                            <td class="py-3 px-6"><span class="text-red-600 font-semibold bg-red-100 px-2 py-1 rounded text-xs">Salida</span></td>
-                            <td class="py-3 px-6">- 4</td>
-                            <td class="py-3 px-6">Hoy, 09:15</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50">
-                            <td class="py-3 px-6">Pastillas de Freno</td>
-                            <td class="py-3 px-6"><span class="text-red-600 font-semibold bg-red-100 px-2 py-1 rounded text-xs">Salida</span></td>
-                            <td class="py-3 px-6">- 2</td>
-                            <td class="py-3 px-6">Ayer, 16:45</td>
-                        </tr>
+                        @forelse($ultimosMovimientos as $movimiento)
+                            <tr class="hover:bg-gray-50 border-b">
+                                <td class="py-3 px-6">{{ $movimiento->producto?->descripcion ?? 'Producto eliminado' }}</td>
+                                <td class="py-3 px-6">
+                                    @if($movimiento->tipo === \App\Models\Movimiento::TIPO_ENTRADA)
+                                        <span class="text-green-600 font-semibold bg-green-100 px-2 py-1 rounded text-xs">Ingreso</span>
+                                    @else
+                                        <span class="text-red-600 font-semibold bg-red-100 px-2 py-1 rounded text-xs">Salida</span>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-6">
+                                    {{ $movimiento->tipo === \App\Models\Movimiento::TIPO_ENTRADA ? '+' : '-' }} {{ $movimiento->cantidad }}
+                                </td>
+                                <td class="py-3 px-6">{{ $movimiento->created_at->locale('es')->diffForHumans() }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="py-10 px-6 text-center text-gray-500">
+                                    <p class="font-semibold text-gray-700">Todavía no hay movimientos registrados</p>
+                                    <p class="text-sm">Los ingresos y salidas de stock van a aparecer acá.</p>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

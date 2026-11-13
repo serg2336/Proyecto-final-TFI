@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Movimiento;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -53,7 +54,15 @@ class ProductoController extends Controller
     // 2. Guardar un producto nuevo
     public function store(Request $request)
     {
-        Producto::create($this->validar($request));
+        $producto = Producto::create($this->validar($request));
+
+        if ($producto->stock > 0) {
+            $producto->movimientos()->create([
+                'tipo' => Movimiento::TIPO_ENTRADA,
+                'cantidad' => $producto->stock,
+                'motivo' => 'Stock inicial',
+            ]);
+        }
 
         return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
     }
@@ -61,7 +70,22 @@ class ProductoController extends Controller
     // 3. Actualizar un producto existente
     public function update(Request $request, Producto $producto)
     {
-        $producto->update($this->validar($request, $producto));
+        $datos = $this->validar($request, $producto);
+        $stockAnterior = (int) $producto->stock;
+
+        $producto->update($datos);
+
+        $nuevoStock = (int) $producto->stock;
+
+        if ($nuevoStock !== $stockAnterior) {
+            $diferencia = $nuevoStock - $stockAnterior;
+
+            $producto->movimientos()->create([
+                'tipo' => $diferencia > 0 ? Movimiento::TIPO_ENTRADA : Movimiento::TIPO_SALIDA,
+                'cantidad' => abs($diferencia),
+                'motivo' => 'Ajuste desde edición',
+            ]);
+        }
 
         return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
     }

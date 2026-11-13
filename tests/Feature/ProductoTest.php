@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Movimiento;
 use App\Models\Producto;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -365,5 +366,115 @@ class ProductoTest extends TestCase
             'id' => $producto->id,
             'descripcion' => 'Bujía NGK Iridium',
         ]);
+    }
+
+    public function test_crear_producto_registra_movimiento_de_entrada(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->post('/productos', [
+            'codigo' => 'NUE-001',
+            'descripcion' => 'Bomba de agua',
+            'marca' => 'Fiat',
+            'precio' => 22000,
+            'stock' => 7,
+        ])->assertRedirect(route('productos.index'));
+
+        $producto = Producto::where('codigo', 'NUE-001')->firstOrFail();
+
+        $this->assertDatabaseHas('movimientos', [
+            'producto_id' => $producto->id,
+            'tipo' => Movimiento::TIPO_ENTRADA,
+            'cantidad' => 7,
+        ]);
+    }
+
+    public function test_editar_el_stock_registra_el_movimiento_correspondiente(): void
+    {
+        $this->actingAs($this->admin());
+
+        $producto = $this->producto(['stock' => 10]);
+
+        $this->put('/productos/'.$producto->id, [
+            'codigo' => $producto->codigo,
+            'descripcion' => $producto->descripcion,
+            'marca' => $producto->marca,
+            'precio' => $producto->precio,
+            'stock' => 6,
+        ])->assertRedirect(route('productos.index'));
+
+        $this->assertDatabaseHas('movimientos', [
+            'producto_id' => $producto->id,
+            'tipo' => Movimiento::TIPO_SALIDA,
+            'cantidad' => 4,
+        ]);
+
+        $this->put('/productos/'.$producto->id, [
+            'codigo' => $producto->codigo,
+            'descripcion' => $producto->descripcion,
+            'marca' => $producto->marca,
+            'precio' => $producto->precio,
+            'stock' => 9,
+        ])->assertRedirect(route('productos.index'));
+
+        $this->assertDatabaseHas('movimientos', [
+            'producto_id' => $producto->id,
+            'tipo' => Movimiento::TIPO_ENTRADA,
+            'cantidad' => 3,
+        ]);
+    }
+
+    public function test_editar_sin_cambiar_el_stock_no_registra_movimiento(): void
+    {
+        $this->actingAs($this->admin());
+
+        $producto = $this->producto(['stock' => 10]);
+
+        $this->put('/productos/'.$producto->id, [
+            'codigo' => $producto->codigo,
+            'descripcion' => 'Filtro de aceite premium',
+            'marca' => $producto->marca,
+            'precio' => $producto->precio,
+            'stock' => 10,
+        ])->assertRedirect(route('productos.index'));
+
+        $this->assertDatabaseCount('movimientos', 0);
+    }
+
+    public function test_dashboard_muestra_los_ultimos_movimientos(): void
+    {
+        $this->actingAs($this->admin());
+
+        $producto = $this->producto(['descripcion' => 'Filtro de aceite']);
+
+        $producto->movimientos()->create([
+            'tipo' => Movimiento::TIPO_ENTRADA,
+            'cantidad' => 15,
+            'motivo' => 'Compra a proveedor',
+        ]);
+        $producto->movimientos()->create([
+            'tipo' => Movimiento::TIPO_SALIDA,
+            'cantidad' => 3,
+            'motivo' => 'Venta de mostrador',
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertViewHas('ultimosMovimientos', fn ($movimientos) => $movimientos->count() === 2)
+            ->assertSee('Filtro de aceite')
+            ->assertSee('Ingreso')
+            ->assertSee('Salida')
+            ->assertSee('+ 15')
+            ->assertSee('- 3');
+    }
+
+    public function test_dashboard_muestra_estado_vacio_de_movimientos(): void
+    {
+        $this->actingAs($this->admin());
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Todavía no hay movimientos registrados')
+            ->assertSee('Los ingresos y salidas de stock van a aparecer acá.');
     }
 }

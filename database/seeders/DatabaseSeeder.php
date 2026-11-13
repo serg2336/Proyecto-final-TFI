@@ -45,5 +45,7 @@ class DatabaseSeeder extends Seeder
                 'role' => User::ROLE_DEPOSITO,
             ],
         );
+
+        $this->call(MovimientoSeeder::class);
     }
 }

@@ -43,7 +43,7 @@
         <!-- Tarjeta 1 -->
         <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
             <p class="text-sm text-gray-500 font-semibold mb-2">Total Productos</p>
-            <p class="text-3xl font-bold text-gray-800">3</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $totalProductos }}</p>
         </div>
 
         <!-- Tarjeta 2 -->

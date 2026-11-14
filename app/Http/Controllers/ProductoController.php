@@ -67,4 +67,13 @@ class ProductoController extends Controller
         $producto->delete();
         return redirect()->route('productos.index')->with('success', 'Producto eliminado.');
     }
+        // Función para ver los productos que necesitan reposición
+    public function stockCritico()
+    {
+        // Trae los productos donde el stock actual es menor al stock mínimo
+        $productosCriticos = Producto::whereColumn('stock', '<=', 'stock_minimo')->get();
+        
+        // Le pasamos esos productos a la vista (la vista la tiene que hacer Lía, pero podemos usar la misma de productos por ahora)
+        return view('stock', compact('productosCriticos')); 
+    }
 }

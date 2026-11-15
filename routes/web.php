@@ -29,8 +29,9 @@ Route::middleware('auth')->group(function () {
     return view('stock', compact('productos')); 
 })->name('stock');
    
+
+    Route::get('/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('reportes'); 
     
-    Route::get('/reportes', function () { return view('reportes'); })->name('reportes');
     Route::get('/ventas', function () { return view('ventas'); })->name('ventas');
 
     Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');

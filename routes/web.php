@@ -19,13 +19,17 @@ Route::get('/', function () {
 require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function () {
+        // Rutas de Pedidos a Proveedores
+    Route::get('/pedidos', [App\Http\Controllers\PedidoController::class, 'index'])->name('pedidos.index');
+    Route::post('/pedidos', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
+    Route::patch('/pedidos/{pedido}/recibir', [App\Http\Controllers\PedidoController::class, 'recibir'])->name('pedidos.recibir');
     
    Route::get('/stock', function () { 
     $productos = \App\Models\Producto::all();
     return view('stock', compact('productos')); 
 })->name('stock');
    
-    Route::get('/pedidos', function () { return view('pedidos'); })->name('pedidos');
+    
     Route::get('/reportes', function () { return view('reportes'); })->name('reportes');
     Route::get('/ventas', function () { return view('ventas'); })->name('ventas');
 
@@ -41,21 +45,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/stock-critico', [ProductoController::class, 'stockCritico'])->name('productos.stock_critico');
 });
 
-Route::get('/test-stock-critico', function () {
-    // 1. Buscamos el primer producto
-    $producto = \App\Models\Producto::first();
-    
-    if (!$producto) {
-        return "No hay productos cargados en la base de datos.";
-    }
 
-    // 2. Le bajamos el stock al mínimo para forzar la alerta
-    $producto->stock = 1;
-    $producto->stock_minimo = 5;
-    $producto->save();
-
-    // 3. Probamos la lógica
-    $productosCriticos = \App\Models\Producto::whereColumn('stock', '<=', 'stock_minimo')->get();
-
-    return "¡Prueba exitosa! El producto '" . $producto->descripcion . "' ahora tiene stock " . $producto->stock . " (mínimo " . $producto->stock_minimo . "). Productos en alerta roja: " . $productosCriticos->count();
-});

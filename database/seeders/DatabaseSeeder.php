@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-<<<<<<< HEAD
+        // 1. Usuario Administrador
         $admin = User::firstOrCreate(
             ['email' => 'admin@italfiat.com'],
             [
@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         // Asegura el rol aunque el usuario ya existiera de antes.
         $admin->update(['role' => User::ROLE_ADMIN]);
 
+        // 2. Usuario Vendedor
         User::firstOrCreate(
             ['email' => 'vendedor@italfiat.com'],
             [
@@ -38,6 +39,7 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
+        // 3. Usuario Depósito
         User::firstOrCreate(
             ['email' => 'deposito@italfiat.com'],
             [
@@ -46,12 +48,5 @@ class DatabaseSeeder extends Seeder
                 'role' => User::ROLE_DEPOSITO,
             ],
         );
-=======
-        User::factory()->create([
-            'name' => 'Soria, Sergio',
-            'email' => 'admin@italfiat.com',
-            'password' => Hash::make('password'),
-        ]);
->>>>>>> b9250cf4d4c3d27f7445291093ec889bf4f836d1
     }
 }

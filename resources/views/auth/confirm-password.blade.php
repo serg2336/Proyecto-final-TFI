@@ -1,27 +1,42 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
-    </div>
+@extends('layouts.auth')
 
-    <form method="POST" action="{{ route('password.confirm') }}">
+@section('titulo_documento', 'Confirmar contraseña - ITAL FIAT')
+@section('eyebrow', 'Área segura')
+
+@section('titulo')
+    Confirmá tu <span class="accent">identidad</span>
+@endsection
+
+@section('lead', 'Por seguridad, ingresá tu contraseña antes de continuar.')
+
+@section('content')
+    <form method="POST" action="{{ route('password.confirm') }}" class="app-login-form">
         @csrf
 
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
+        <p class="app-form-legend">Contraseña actual</p>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="app-field">
+            <label for="password">Contraseña</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                @class(['is-invalid' => $errors->has('password')])
+                @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
+                required
+                autofocus
+            >
+            @error('password')
+                <p class="app-field-error" id="password-error" role="alert">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" class="app-login-btn">Confirmar</button>
+
+        <p class="app-auth-alt">
+            <a href="{{ route('dashboard') }}" class="app-login-link">Volver al panel</a>
+        </p>
     </form>
-</x-guest-layout>
+@endsection

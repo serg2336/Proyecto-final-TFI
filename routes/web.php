@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MovimientoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
@@ -43,14 +44,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/stock', function () {
         $productos = Producto::query()->orderBy('stock')->orderBy('descripcion')->get();
 
-        return view('stock', compact('productos'));
+        $ultimosMovimientos = Movimiento::with('producto')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->take(10)
+            ->get();
+
+        return view('stock', compact('productos', 'ultimosMovimientos'));
     })->name('stock.index');
 
-    // Pedidos: administrador y depósito.
+    // Pedidos y movimientos de stock: administrador y depósito.
     Route::middleware('role:administrador,deposito')->group(function () {
+        // Rutas de Pedidos (de Ramiro)
         Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
         Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');
         Route::patch('/pedidos/{pedido}/recibir', [PedidoController::class, 'recibir'])->name('pedidos.recibir');
+
+        // Rutas de Movimientos (de Lía)
+        Route::post('/stock/{producto}/movimientos', [MovimientoController::class, 'store'])
+            ->name('movimientos.store');
     });
 
     // Ventas y clientes: administrador y vendedor.

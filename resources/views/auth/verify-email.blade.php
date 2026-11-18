@@ -1,31 +1,40 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+@extends('layouts.auth')
+
+@section('titulo_documento', 'Verificar correo - ITAL FIAT')
+@section('eyebrow', 'Verificación')
+
+@section('titulo')
+    Verificá tu <span class="accent">correo</span>
+@endsection
+
+@section('lead', 'Estamos casi listos para que empieces a usar el sistema.')
+
+@section('content')
+    <div class="app-auth-note">
+        <p>
+            Te enviamos un correo con un enlace de verificación.
+            Hacé clic en ese enlace para activar tu cuenta.
+        </p>
+        <p>
+            Si no lo recibiste, revisá la carpeta de spam o pedí uno nuevo.
+        </p>
     </div>
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+    @if (session('status') === 'verification-link-sent')
+        <div class="app-login-status" role="status">
+            Te enviamos un nuevo enlace de verificación.
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+    <form method="POST" action="{{ route('verification.send') }}" class="app-login-form">
+        @csrf
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
-        </form>
+        <button type="submit" class="app-login-btn">Reenviar correo</button>
+    </form>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
+    <form method="POST" action="{{ route('logout') }}" class="app-auth-logout">
+        @csrf
 
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('Log Out') }}
-            </button>
-        </form>
-    </div>
-</x-guest-layout>
+        <button type="submit" class="app-auth-link-button">Cerrar sesión</button>
+    </form>
+@endsection

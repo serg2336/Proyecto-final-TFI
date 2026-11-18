@@ -1,52 +1,102 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+@extends('layouts.auth')
+
+@section('titulo_documento', 'Crear cuenta - ITAL FIAT')
+@section('eyebrow', 'Registro')
+
+@section('titulo')
+    Creá tu <span class="accent">cuenta</span>
+@endsection
+
+@section('lead', 'Completá tus datos para empezar a usar el sistema.')
+
+@section('content')
+    <form method="POST" action="{{ route('register') }}" class="app-login-form">
         @csrf
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        <p class="app-form-legend">Datos de la cuenta</p>
+
+        <div class="app-field">
+            <label for="name">Nombre y apellido</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ old('name') }}"
+                placeholder="Ej: Barcos, Lía"
+                autocomplete="name"
+                @class(['is-invalid' => $errors->has('name')])
+                @error('name') aria-invalid="true" aria-describedby="name-error" @enderror
+                required
+                autofocus
+            >
+            @error('name')
+                <p class="app-field-error" id="name-error" role="alert">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="app-field">
+            <label for="email">Correo electrónico</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ old('email') }}"
+                placeholder="nombre@italfiat.com"
+                autocomplete="username"
+                @class(['is-invalid' => $errors->has('email')])
+                @error('email') aria-invalid="true" aria-describedby="email-error" @enderror
+                required
+            >
+            @error('email')
+                <p class="app-field-error" id="email-error" role="alert">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="app-field">
+            <label for="password">Contraseña</label>
+            <div class="app-input-wrap">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Mínimo 8 caracteres"
+                    autocomplete="new-password"
+                    @class(['has-toggle', 'is-invalid' => $errors->has('password')])
+                    @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
+                    required
+                >
+                @include('partials.password-toggle')
+            </div>
+            @error('password')
+                <p class="app-field-error" id="password-error" role="alert">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div class="app-field">
+            <label for="password_confirmation">Confirmá la contraseña</label>
+            <div class="app-input-wrap">
+                <input
+                    type="password"
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    placeholder="Repetí la contraseña"
+                    autocomplete="new-password"
+                    @class(['has-toggle', 'is-invalid' => $errors->has('password_confirmation')])
+                    @error('password_confirmation') aria-invalid="true" aria-describedby="password-confirmation-error" @enderror
+                    required
+                >
+                @include('partials.password-toggle')
+            </div>
+            @error('password_confirmation')
+                <p class="app-field-error" id="password-confirmation-error" role="alert">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <button type="submit" class="app-login-btn">Crear cuenta</button>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
+        <p class="app-auth-alt">
+            ¿Ya tenés cuenta?
+            <a href="{{ route('login') }}" class="app-login-link">Iniciá sesión</a>
+        </p>
     </form>
-</x-guest-layout>
+@endsection

@@ -1,25 +1,47 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+@extends('layouts.auth')
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@section('titulo_documento', 'Recuperar contraseña - ITAL FIAT')
+@section('eyebrow', 'Recuperar acceso')
 
-    <form method="POST" action="{{ route('password.email') }}">
+@section('titulo')
+    ¿Olvidaste tu <span class="accent">contraseña</span>?
+@endsection
+
+@section('lead', 'Ingresá tu correo y te enviamos un enlace para elegir una nueva.')
+
+@section('content')
+    @if (session('status'))
+        <div class="app-login-status" role="status">{{ session('status') }}</div>
+    @endif
+
+    <form method="POST" action="{{ route('password.email') }}" class="app-login-form">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <p class="app-form-legend">Correo de la cuenta</p>
+
+        <div class="app-field">
+            <label for="email">Correo electrónico</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ old('email') }}"
+                placeholder="nombre@italfiat.com"
+                autocomplete="username"
+                @class(['is-invalid' => $errors->has('email')])
+                @error('email') aria-invalid="true" aria-describedby="email-error" @enderror
+                required
+                autofocus
+            >
+            @error('email')
+                <p class="app-field-error" id="email-error" role="alert">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" class="app-login-btn">Enviar enlace</button>
+
+        <p class="app-auth-alt">
+            <a href="{{ route('login') }}" class="app-login-link">Volver al inicio de sesión</a>
+        </p>
     </form>
-</x-guest-layout>
+@endsection

@@ -38,16 +38,19 @@
 
         <div class="app-field">
             <label for="password">Contraseña nueva</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Mínimo 8 caracteres"
-                autocomplete="new-password"
-                @class(['is-invalid' => $errors->has('password')])
-                @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
-                required
-            >
+            <div class="app-input-wrap">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Mínimo 8 caracteres"
+                    autocomplete="new-password"
+                    @class(['has-toggle', 'is-invalid' => $errors->has('password')])
+                    @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
+                    required
+                >
+                @include('partials.password-toggle')
+            </div>
             @error('password')
                 <p class="app-field-error" id="password-error" role="alert">{{ $message }}</p>
             @enderror
@@ -55,16 +58,19 @@
 
         <div class="app-field">
             <label for="password_confirmation">Confirmá la contraseña</label>
-            <input
-                type="password"
-                id="password_confirmation"
-                name="password_confirmation"
-                placeholder="Repetí la contraseña"
-                autocomplete="new-password"
-                @class(['is-invalid' => $errors->has('password_confirmation')])
-                @error('password_confirmation') aria-invalid="true" aria-describedby="password-confirmation-error" @enderror
-                required
-            >
+            <div class="app-input-wrap">
+                <input
+                    type="password"
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    placeholder="Repetí la contraseña"
+                    autocomplete="new-password"
+                    @class(['has-toggle', 'is-invalid' => $errors->has('password_confirmation')])
+                    @error('password_confirmation') aria-invalid="true" aria-describedby="password-confirmation-error" @enderror
+                    required
+                >
+                @include('partials.password-toggle')
+            </div>
             @error('password_confirmation')
                 <p class="app-field-error" id="password-confirmation-error" role="alert">{{ $message }}</p>
             @enderror

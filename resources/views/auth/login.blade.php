@@ -45,16 +45,19 @@
                 <label for="password">Contraseña</label>
                 <a href="{{ route('password.request') }}" class="app-login-link">¿Olvidaste tu contraseña?</a>
             </div>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="••••••••"
-                autocomplete="current-password"
-                @class(['is-invalid' => $errors->has('password')])
-                @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
-                required
-            >
+            <div class="app-input-wrap">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                    @class(['has-toggle', 'is-invalid' => $errors->has('password')])
+                    @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
+                    required
+                >
+                @include('partials.password-toggle')
+            </div>
             {{-- TASK-8: error dinámico del campo contraseña. --}}
             @error('password')
                 <p class="app-field-error" id="password-error" role="alert">{{ $message }}</p>

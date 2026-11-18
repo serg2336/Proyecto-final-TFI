@@ -17,17 +17,20 @@
 
         <div class="app-field">
             <label for="password">Contraseña</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="••••••••"
-                autocomplete="current-password"
-                @class(['is-invalid' => $errors->has('password')])
-                @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
-                required
-                autofocus
-            >
+            <div class="app-input-wrap">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                    @class(['has-toggle', 'is-invalid' => $errors->has('password')])
+                    @error('password') aria-invalid="true" aria-describedby="password-error" @enderror
+                    required
+                    autofocus
+                >
+                @include('partials.password-toggle')
+            </div>
             @error('password')
                 <p class="app-field-error" id="password-error" role="alert">{{ $message }}</p>
             @enderror

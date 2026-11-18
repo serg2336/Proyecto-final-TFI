@@ -632,6 +632,59 @@ body.app-dark {
     box-shadow: 0 0 0 3px rgba(210, 13, 30, 0.15);
 }
 
+/* ---------- Mostrar / ocultar contraseña (botón del ojo) ---------- */
+
+.app-input-wrap {
+    position: relative;
+}
+
+.app-field input.has-toggle {
+    padding-right: 46px;
+}
+
+.app-toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--app-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.app-toggle-password:hover,
+.app-toggle-password:focus-visible {
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.07);
+    outline: none;
+}
+
+.app-toggle-password svg {
+    width: 18px;
+    height: 18px;
+}
+
+.app-toggle-password .app-eye-off {
+    display: none;
+}
+
+.app-toggle-password.is-visible .app-eye {
+    display: none;
+}
+
+.app-toggle-password.is-visible .app-eye-off {
+    display: block;
+}
+
 /* ---------- TASK-8: errores por campo en el Login ---------- */
 
 .app-field input.is-invalid {

@@ -22,6 +22,8 @@ class AuthViewsTest extends TestCase
         $this->get('/login')
             ->assertOk()
             ->assertSee('¿Olvidaste tu contraseña?')
+            ->assertSee('data-toggle-password', false)
+            ->assertSee('Mostrar contraseña')
             ->assertSee('href="'.route('password.request').'"', false);
     }
 
@@ -33,6 +35,7 @@ class AuthViewsTest extends TestCase
             ->assertSee('Nombre y apellido')
             ->assertSee('Confirmá la contraseña')
             ->assertSee('Crear cuenta')
+            ->assertSee('data-toggle-password', false)
             ->assertSee('action="'.route('register').'"', false);
     }
 
@@ -75,6 +78,7 @@ class AuthViewsTest extends TestCase
             ->assertSee('Elegí una')
             ->assertSee('Guardar contraseña')
             ->assertSee('value="admin@italfiat.com"', false)
+            ->assertSee('data-toggle-password', false)
             ->assertSee('action="'.route('password.store').'"', false);
     }
 
@@ -85,6 +89,7 @@ class AuthViewsTest extends TestCase
             ->assertOk()
             ->assertSee('Confirmá tu')
             ->assertSee('Confirmar')
+            ->assertSee('data-toggle-password', false)
             ->assertSee('action="'.route('password.confirm').'"', false);
     }
 

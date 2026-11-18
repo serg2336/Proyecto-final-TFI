@@ -33,5 +33,29 @@
         </section>
     </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-toggle-password]').forEach(function (boton) {
+                boton.addEventListener('click', function () {
+                    const contenedor = boton.closest('.app-input-wrap');
+                    const input = contenedor ? contenedor.querySelector('input') : null;
+
+                    if (!input) {
+                        return;
+                    }
+
+                    const oculto = input.type === 'password';
+
+                    input.type = oculto ? 'text' : 'password';
+                    boton.classList.toggle('is-visible', oculto);
+                    boton.setAttribute('aria-pressed', oculto ? 'true' : 'false');
+                    boton.setAttribute('aria-label', oculto ? 'Ocultar contraseña' : 'Mostrar contraseña');
+                    boton.setAttribute('title', oculto ? 'Ocultar contraseña' : 'Mostrar contraseña');
+                    input.focus();
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>

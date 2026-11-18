@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -47,7 +48,9 @@ Route::middleware('auth')->group(function () {
 
     // Pedidos: administrador y depósito.
     Route::middleware('role:administrador,deposito')->group(function () {
-        Route::get('/pedidos', fn () => view('pedidos'))->name('pedidos.index');
+        Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+        Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');
+        Route::patch('/pedidos/{pedido}/recibir', [PedidoController::class, 'recibir'])->name('pedidos.recibir');
     });
 
     // Ventas y clientes: administrador y vendedor.

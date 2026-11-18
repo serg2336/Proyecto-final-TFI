@@ -3,6 +3,13 @@
 @section('titulo_pagina', 'Stock Actual')
 
 @section('content')
+    @php
+        $puedePedir = auth()->user()?->hasAnyRole(
+            \App\Models\User::ROLE_ADMIN,
+            \App\Models\User::ROLE_DEPOSITO
+        );
+    @endphp
+
     <!-- Encabezado -->
     <div class="flex justify-between items-center mb-6">
         <div>
@@ -13,6 +20,12 @@
             <span>📦</span> Gestionar productos
         </a>
     </div>
+
+    @if (session('success'))
+        <div class="mb-6 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3">
+            {{ session('success') }}
+        </div>
+    @endif
 
     <!-- Existencias actuales -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -45,6 +58,22 @@
                                 <span class="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs font-bold" title="Quedan pocas unidades. Revisá el umbral de reposición.">Stock bajo</span>
                             @else
                                 <span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">Disponible</span>
+                            @endif
+
+                            @if ($puedePedir && $producto->stock <= $producto->stock_minimo)
+                                <form
+                                    action="{{ route('pedidos.store') }}"
+                                    method="POST"
+                                    class="mt-2 flex items-center gap-2"
+                                    onsubmit="return confirm('¿Registrar el pedido al proveedor?')"
+                                >
+                                    @csrf
+                                    <input type="hidden" name="producto_id" value="{{ $producto->id }}">
+                                    <input type="hidden" name="cantidad" value="{{ max($producto->stock_minimo - $producto->stock, 1) }}">
+                                    <button type="submit" class="text-green-700 bg-green-100 hover:bg-green-200 px-2 py-1 rounded text-xs font-bold transition">
+                                        Pedir al proveedor
+                                    </button>
+                                </form>
                             @endif
                         </td>
                     </tr>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MovimientoController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -54,8 +55,12 @@ Route::middleware('auth')->group(function () {
 
     // Pedidos y movimientos de stock: administrador y depósito.
     Route::middleware('role:administrador,deposito')->group(function () {
-        Route::get('/pedidos', fn () => view('pedidos'))->name('pedidos.index');
+        // Rutas de Pedidos (de Ramiro)
+        Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+        Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedidos.store');
+        Route::patch('/pedidos/{pedido}/recibir', [PedidoController::class, 'recibir'])->name('pedidos.recibir');
 
+        // Rutas de Movimientos (de Lía)
         Route::post('/stock/{producto}/movimientos', [MovimientoController::class, 'store'])
             ->name('movimientos.store');
     });

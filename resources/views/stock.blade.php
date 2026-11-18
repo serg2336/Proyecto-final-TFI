@@ -9,6 +9,11 @@
             \App\Models\User::ROLE_DEPOSITO
         );
 
+        $puedePedir = auth()->user()?->hasAnyRole(
+            \App\Models\User::ROLE_ADMIN,
+            \App\Models\User::ROLE_DEPOSITO
+        );
+
         $productosBajos = $productos->filter(
             fn ($producto) => $producto->stock <= $producto->stock_minimo
         );
@@ -72,6 +77,22 @@
                                 <span class="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs font-bold" title="Quedan pocas unidades. Revisá el umbral de reposición.">Stock bajo</span>
                             @else
                                 <span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">Disponible</span>
+                            @endif
+
+                            @if ($puedePedir && $producto->stock <= $producto->stock_minimo)
+                                <form
+                                    action="{{ route('pedidos.store') }}"
+                                    method="POST"
+                                    class="mt-2 flex items-center gap-2"
+                                    onsubmit="return confirm('¿Registrar el pedido al proveedor?')"
+                                >
+                                    @csrf
+                                    <input type="hidden" name="producto_id" value="{{ $producto->id }}">
+                                    <input type="hidden" name="cantidad" value="{{ max($producto->stock_minimo - $producto->stock, 1) }}">
+                                    <button type="submit" class="text-green-700 bg-green-100 hover:bg-green-200 px-2 py-1 rounded text-xs font-bold transition">
+                                        Pedir al proveedor
+                                    </button>
+                                </form>
                             @endif
                         </td>
                         @if ($puedeGestionar)

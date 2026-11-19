@@ -40,13 +40,15 @@ class StressTest extends TestCase
 
     /**
      * Alta masiva por lotes (evita 2000 inserts individuales de Eloquent).
+     *
+     * @param  int  $desde  Primer índice de código, para sumar lotes sin repetir el `codigo` único.
      */
-    private function crearProductosMasivos(int $cantidad): void
+    private function crearProductosMasivos(int $cantidad, int $desde = 1): void
     {
         $ahora = now();
         $lote = [];
 
-        for ($i = 1; $i <= $cantidad; $i++) {
+        for ($i = $desde; $i < $desde + $cantidad; $i++) {
             $lote[] = [
                 'codigo' => sprintf('STRESS-%05d', $i),
                 'descripcion' => 'Repuesto de prueba masiva '.$i,
@@ -142,9 +144,44 @@ class StressTest extends TestCase
 
     public function test_la_busqueda_no_escala_en_queries_por_producto(): void
     {
-        $this->crearProductosMasivos(self::VOLUMEN_PRODUCTOS);
+        $this->crearProductosMasivos(100);
         $this->actingAs($this->admin());
 
+        // Calienta la ruta para que las queries de arranque no contaminen la medición.
+        $this->get('/productos')->assertOk();
+
+        $queriesCon100 = $this->queriesDeLaBusqueda();
+
+        // Multiplica el volumen por 20: con N+1 las queries crecerían junto a las filas.
+        $this->crearProductosMasivos(self::VOLUMEN_PRODUCTOS - 100, 101);
+
+        $queriesCon2000 = $this->queriesDeLaBusqueda();
+
+        $this->assertSame(
+            $queriesCon100,
+            $queriesCon2000,
+            sprintf(
+                'La búsqueda pasó de %d a %d queries al pasar de 100 a %d productos: escala por fila (N+1).',
+                $queriesCon100,
+                $queriesCon2000,
+                self::VOLUMEN_PRODUCTOS
+            )
+        );
+
+        // El costo debe ser fijo (listado + marcas + modelos), no proporcional a las filas.
+        $this->assertLessThan(
+            15,
+            $queriesCon2000,
+            sprintf('La búsqueda disparó %d queries (umbral: 15). Posible N+1.', $queriesCon2000)
+        );
+    }
+
+    /**
+     * Queries disparadas por una búsqueda puntual en el listado de productos.
+     */
+    private function queriesDeLaBusqueda(): int
+    {
+        DB::flushQueryLog();
         DB::enableQueryLog();
 
         $this->get('/productos?buscar=STRESS-00042')
@@ -154,13 +191,9 @@ class StressTest extends TestCase
         $queries = count(DB::getQueryLog());
 
         DB::disableQueryLog();
+        DB::flushQueryLog();
 
-        // El costo debe ser fijo (listado + marcas + modelos + sesión), no proporcional a 2000 filas.
-        $this->assertLessThan(
-            15,
-            $queries,
-            sprintf('La búsqueda disparó %d queries (umbral: 15). Posible N+1.', $queries)
-        );
+        return $queries;
     }
 
     public function test_el_dashboard_responde_con_alto_volumen_de_productos_y_movimientos(): void

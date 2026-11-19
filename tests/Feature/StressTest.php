@@ -40,13 +40,15 @@ class StressTest extends TestCase
 
     /**
      * Alta masiva por lotes (evita 2000 inserts individuales de Eloquent).
+     *
+     * @param  int  $desde  Primer índice de código, para sumar lotes sin repetir el `codigo` único.
      */
-    private function crearProductosMasivos(int $cantidad): void
+    private function crearProductosMasivos(int $cantidad, int $desde = 1): void
     {
         $ahora = now();
         $lote = [];
 
-        for ($i = 1; $i <= $cantidad; $i++) {
+        for ($i = $desde; $i < $desde + $cantidad; $i++) {
             $lote[] = [
                 'codigo' => sprintf('STRESS-%05d', $i),
                 'descripcion' => 'Repuesto de prueba masiva '.$i,
@@ -70,19 +72,51 @@ class StressTest extends TestCase
         }
     }
 
+    /**
+     * Carga un producto con historial masivo de movimientos.
+     *
+     * El stock final se calcula como carga inicial + entradas - salidas y la carga inicial
+     * también se registra como movimiento, de modo que el stock del producto siempre coincide
+     * con el neto de su historial (auditable, igual que en el alta real de productos).
+     */
     private function crearMovimientosMasivos(int $cantidad): void
     {
+        $ahora = now();
+        $entradas = 0;
+        $salidas = 0;
+
+        for ($i = 1; $i <= $cantidad; $i++) {
+            $unidades = ($i % 10) + 1;
+
+            if ($i % 2 === 0) {
+                $entradas += $unidades;
+            } else {
+                $salidas += $unidades;
+            }
+        }
+
+        // Carga inicial que cubre las salidas: el stock nunca queda negativo.
+        $cargaInicial = $salidas;
+
         $producto = Producto::create([
             'codigo' => 'STRESS-MOV',
             'descripcion' => 'Producto con historial masivo',
             'marca' => 'Fiat',
             'precio' => 5000,
-            'stock' => 500,
+            'stock' => $cargaInicial + $entradas - $salidas,
             'stock_minimo' => 5,
         ]);
 
-        $ahora = now();
-        $lote = [];
+        $lote = [
+            [
+                'producto_id' => $producto->id,
+                'tipo' => Movimiento::TIPO_ENTRADA,
+                'cantidad' => $cargaInicial,
+                'motivo' => 'Carga inicial de stock',
+                'created_at' => $ahora,
+                'updated_at' => $ahora,
+            ],
+        ];
 
         for ($i = 1; $i <= $cantidad; $i++) {
             $lote[] = [
@@ -142,9 +176,44 @@ class StressTest extends TestCase
 
     public function test_la_busqueda_no_escala_en_queries_por_producto(): void
     {
-        $this->crearProductosMasivos(self::VOLUMEN_PRODUCTOS);
+        $this->crearProductosMasivos(100);
         $this->actingAs($this->admin());
 
+        // Calienta la ruta para que las queries de arranque no contaminen la medición.
+        $this->get('/productos')->assertOk();
+
+        $queriesCon100 = $this->queriesDeLaBusqueda();
+
+        // Multiplica el volumen por 20: con N+1 las queries crecerían junto a las filas.
+        $this->crearProductosMasivos(self::VOLUMEN_PRODUCTOS - 100, 101);
+
+        $queriesCon2000 = $this->queriesDeLaBusqueda();
+
+        $this->assertSame(
+            $queriesCon100,
+            $queriesCon2000,
+            sprintf(
+                'La búsqueda pasó de %d a %d queries al pasar de 100 a %d productos: escala por fila (N+1).',
+                $queriesCon100,
+                $queriesCon2000,
+                self::VOLUMEN_PRODUCTOS
+            )
+        );
+
+        // El costo debe ser fijo (listado + marcas + modelos), no proporcional a las filas.
+        $this->assertLessThan(
+            15,
+            $queriesCon2000,
+            sprintf('La búsqueda disparó %d queries (umbral: 15). Posible N+1.', $queriesCon2000)
+        );
+    }
+
+    /**
+     * Queries disparadas por una búsqueda puntual en el listado de productos.
+     */
+    private function queriesDeLaBusqueda(): int
+    {
+        DB::flushQueryLog();
         DB::enableQueryLog();
 
         $this->get('/productos?buscar=STRESS-00042')
@@ -154,13 +223,9 @@ class StressTest extends TestCase
         $queries = count(DB::getQueryLog());
 
         DB::disableQueryLog();
+        DB::flushQueryLog();
 
-        // El costo debe ser fijo (listado + marcas + modelos + sesión), no proporcional a 2000 filas.
-        $this->assertLessThan(
-            15,
-            $queries,
-            sprintf('La búsqueda disparó %d queries (umbral: 15). Posible N+1.', $queries)
-        );
+        return $queries;
     }
 
     public function test_el_dashboard_responde_con_alto_volumen_de_productos_y_movimientos(): void
@@ -180,6 +245,49 @@ class StressTest extends TestCase
             5,
             $duracion,
             sprintf('El dashboard con %d productos y %d movimientos tomó %.2fs (umbral: 5s).', self::VOLUMEN_PRODUCTOS, self::VOLUMEN_MOVIMIENTOS, $duracion)
+        );
+    }
+
+    public function test_el_listado_de_stock_responde_con_alto_volumen(): void
+    {
+        $this->crearProductosMasivos(self::VOLUMEN_PRODUCTOS);
+        $this->crearMovimientosMasivos(self::VOLUMEN_MOVIMIENTOS);
+        $this->actingAs($this->admin());
+
+        $inicio = microtime(true);
+
+        $respuesta = $this->get('/stock');
+
+        $duracion = microtime(true) - $inicio;
+
+        // /stock es la vista más pesada: 2000 filas de productos + historial + fecha relativa por fila.
+        $respuesta->assertOk()
+            ->assertSee('STRESS-00001')
+            ->assertSee('STRESS-02000')
+            ->assertSee('Movimiento de stress '.self::VOLUMEN_MOVIMIENTOS);
+
+        $this->assertLessThan(
+            5,
+            $duracion,
+            sprintf('El listado de stock con %d productos y %d movimientos tomó %.2fs (umbral: 5s).', self::VOLUMEN_PRODUCTOS, self::VOLUMEN_MOVIMIENTOS, $duracion)
+        );
+    }
+
+    public function test_el_producto_masivo_mantiene_el_stock_consistente_con_sus_movimientos(): void
+    {
+        $this->crearMovimientosMasivos(self::VOLUMEN_MOVIMIENTOS);
+
+        $producto = Producto::where('codigo', 'STRESS-MOV')->firstOrFail();
+
+        $neto = (int) Movimiento::query()
+            ->where('producto_id', $producto->id)
+            ->selectRaw("SUM(CASE WHEN tipo = 'entrada' THEN cantidad ELSE -cantidad END) as neto")
+            ->value('neto');
+
+        $this->assertSame(
+            (int) $producto->stock,
+            $neto,
+            'El stock del producto masivo no coincide con el neto de su historial de movimientos.'
         );
     }
 }

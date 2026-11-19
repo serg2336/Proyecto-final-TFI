@@ -72,19 +72,51 @@ class StressTest extends TestCase
         }
     }
 
+    /**
+     * Carga un producto con historial masivo de movimientos.
+     *
+     * El stock final se calcula como carga inicial + entradas - salidas y la carga inicial
+     * también se registra como movimiento, de modo que el stock del producto siempre coincide
+     * con el neto de su historial (auditable, igual que en el alta real de productos).
+     */
     private function crearMovimientosMasivos(int $cantidad): void
     {
+        $ahora = now();
+        $entradas = 0;
+        $salidas = 0;
+
+        for ($i = 1; $i <= $cantidad; $i++) {
+            $unidades = ($i % 10) + 1;
+
+            if ($i % 2 === 0) {
+                $entradas += $unidades;
+            } else {
+                $salidas += $unidades;
+            }
+        }
+
+        // Carga inicial que cubre las salidas: el stock nunca queda negativo.
+        $cargaInicial = $salidas;
+
         $producto = Producto::create([
             'codigo' => 'STRESS-MOV',
             'descripcion' => 'Producto con historial masivo',
             'marca' => 'Fiat',
             'precio' => 5000,
-            'stock' => 500,
+            'stock' => $cargaInicial + $entradas - $salidas,
             'stock_minimo' => 5,
         ]);
 
-        $ahora = now();
-        $lote = [];
+        $lote = [
+            [
+                'producto_id' => $producto->id,
+                'tipo' => Movimiento::TIPO_ENTRADA,
+                'cantidad' => $cargaInicial,
+                'motivo' => 'Carga inicial de stock',
+                'created_at' => $ahora,
+                'updated_at' => $ahora,
+            ],
+        ];
 
         for ($i = 1; $i <= $cantidad; $i++) {
             $lote[] = [
@@ -238,6 +270,24 @@ class StressTest extends TestCase
             5,
             $duracion,
             sprintf('El listado de stock con %d productos y %d movimientos tomó %.2fs (umbral: 5s).', self::VOLUMEN_PRODUCTOS, self::VOLUMEN_MOVIMIENTOS, $duracion)
+        );
+    }
+
+    public function test_el_producto_masivo_mantiene_el_stock_consistente_con_sus_movimientos(): void
+    {
+        $this->crearMovimientosMasivos(self::VOLUMEN_MOVIMIENTOS);
+
+        $producto = Producto::where('codigo', 'STRESS-MOV')->firstOrFail();
+
+        $neto = (int) Movimiento::query()
+            ->where('producto_id', $producto->id)
+            ->selectRaw("SUM(CASE WHEN tipo = 'entrada' THEN cantidad ELSE -cantidad END) as neto")
+            ->value('neto');
+
+        $this->assertSame(
+            (int) $producto->stock,
+            $neto,
+            'El stock del producto masivo no coincide con el neto de su historial de movimientos.'
         );
     }
 }

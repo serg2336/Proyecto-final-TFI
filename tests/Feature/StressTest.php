@@ -215,4 +215,29 @@ class StressTest extends TestCase
             sprintf('El dashboard con %d productos y %d movimientos tomó %.2fs (umbral: 5s).', self::VOLUMEN_PRODUCTOS, self::VOLUMEN_MOVIMIENTOS, $duracion)
         );
     }
+
+    public function test_el_listado_de_stock_responde_con_alto_volumen(): void
+    {
+        $this->crearProductosMasivos(self::VOLUMEN_PRODUCTOS);
+        $this->crearMovimientosMasivos(self::VOLUMEN_MOVIMIENTOS);
+        $this->actingAs($this->admin());
+
+        $inicio = microtime(true);
+
+        $respuesta = $this->get('/stock');
+
+        $duracion = microtime(true) - $inicio;
+
+        // /stock es la vista más pesada: 2000 filas de productos + historial + fecha relativa por fila.
+        $respuesta->assertOk()
+            ->assertSee('STRESS-00001')
+            ->assertSee('STRESS-02000')
+            ->assertSee('Movimiento de stress '.self::VOLUMEN_MOVIMIENTOS);
+
+        $this->assertLessThan(
+            5,
+            $duracion,
+            sprintf('El listado de stock con %d productos y %d movimientos tomó %.2fs (umbral: 5s).', self::VOLUMEN_PRODUCTOS, self::VOLUMEN_MOVIMIENTOS, $duracion)
+        );
+    }
 }

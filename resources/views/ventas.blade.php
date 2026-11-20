@@ -1,76 +1,170 @@
 @extends('layouts.app')
 
-@section('titulo_pagina', 'Registro de Ventas')
+@section('titulo_pagina', 'Punto de Venta')
 
 @section('content')
-    <!-- Encabezado -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h3 class="text-2xl font-bold text-gray-800">Historial de Ventas</h3>
-            <p class="text-gray-500 text-sm">Registrá y consultá las ventas de repuestos.</p>
+            <h3 class="text-2xl font-bold text-gray-800">Nueva Venta</h3>
+            <p class="text-gray-500 text-sm">Agregá los productos y confirmá la venta.</p>
         </div>
-        <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition flex items-center gap-2">
-            <span>💰</span> Registrar Nueva Venta
-        </button>
     </div>
 
-    <!-- Barra de Búsqueda y Filtro -->
-    <div class="bg-white p-4 rounded-lg shadow mb-6 flex gap-4">
-        <input type="text" placeholder="Buscar ticket o cliente..." class="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <input type="date" class="w-full md:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500">
-        <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded transition">
-            Filtrar
-        </button>
-    </div>
+    <!-- Mensajes de error -->
+    @if(session('error'))
+        <div class="bg-red-100 text-red-700 p-3 rounded mb-4">{{ session('error') }}</div>
+    @endif
 
-    <!-- Tabla de Ventas -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
-                    <th class="py-4 px-6 border-b">Nº Ticket</th>
-                    <th class="py-4 px-6 border-b">Fecha y Hora</th>
-                    <th class="py-4 px-6 border-b">Cliente</th>
-                    <th class="py-4 px-6 border-b">Método de Pago</th>
-                    <th class="py-4 px-6 border-b">Total</th>
-                    <th class="py-4 px-6 border-b text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-700">
-                <!-- Fila 1 -->
-                <tr class="hover:bg-gray-50 border-b">
-                    <td class="py-4 px-6 font-mono text-sm">T-00125</td>
-                    <td class="py-4 px-6">Hoy, 11:45 hs</td>
-                    <td class="py-4 px-6 font-semibold">Juan Pérez</td>
-                    <td class="py-4 px-6"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">Efectivo</span></td>
-                    <td class="py-4 px-6 font-bold">$ 12,500.00</td>
-                    <td class="py-4 px-6 text-center">
-                        <button class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Ver Ticket</button>
-                    </td>
-                </tr>
-                <!-- Fila 2 -->
-                <tr class="hover:bg-gray-50 border-b">
-                    <td class="py-4 px-6 font-mono text-sm">T-00124</td>
-                    <td class="py-4 px-6">Hoy, 10:15 hs</td>
-                    <td class="py-4 px-6 font-semibold">Taller Mecánico "El Rápido"</td>
-                    <td class="py-4 px-6"><span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">Cta. Corriente</span></td>
-                    <td class="py-4 px-6 font-bold">$ 45,000.00</td>
-                    <td class="py-4 px-6 text-center">
-                        <button class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Ver Ticket</button>
-                    </td>
-                </tr>
-                <!-- Fila 3 -->
-                <tr class="hover:bg-gray-50">
-                    <td class="py-4 px-6 font-mono text-sm">T-00123</td>
-                    <td class="py-4 px-6">Ayer, 16:30 hs</td>
-                    <td class="py-4 px-6 font-semibold">Transporte del Sur S.R.L.</td>
-                    <td class="py-4 px-6"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Transferencia</span></td>
-                    <td class="py-4 px-6 font-bold">$ 128,900.00</td>
-                    <td class="py-4 px-6 text-center">
-                        <button class="text-blue-500 hover:text-blue-700 font-semibold text-sm">Ver Ticket</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <!-- Formulario de Venta -->
+    <form action="{{ route('ventas.store') }}" method="POST" id="formulario-venta">
+        @csrf
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+            <table class="w-full text-left border-collapse" id="tabla-venta">
+                <thead>
+                    <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
+                        <th class="py-4 px-6 border-b w-2/5">Producto</th>
+                        <th class="py-4 px-6 border-b w-24">Cantidad</th>
+                        <th class="py-4 px-6 border-b w-32">Precio Unit.</th>
+                        <th class="py-4 px-6 border-b w-32">Subtotal</th>
+                        <th class="py-4 px-6 border-b w-16 text-center">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-factura" class="text-gray-700">
+                    <!-- La primera fila la crea el sistema -->
+                    <tr class="border-b fila-producto">
+                        <td class="py-3 px-6">
+                            <select name="productos[0][id]" class="w-full border border-gray-300 p-2 rounded select-producto" required onchange="actualizarPrecio(this)">
+                                <option value="">Seleccione producto...</option>
+                                @foreach(\App\Models\Producto::where('stock', '>', 0)->get() as $p)
+                                    <option value="{{ $p->id }}" data-precio="{{ $p->precio }}" data-stock="{{ $p->stock }}">
+                                        {{ $p->descripcion }} (Stock: {{ $p->stock }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td class="py-3 px-6">
+                            <input type="number" name="productos[0][cantidad]" min="1" value="1" class="w-full border border-gray-300 p-2 rounded input-cantidad" required onchange="calcularFila(this)">
+                        </td>
+                        <td class="py-3 px-6 precio-unitario-text">$0.00</td>
+                        <td class="py-3 px-6 font-bold subtotal-text">$0.00</td>
+                        <td class="py-3 px-6 text-center">
+                            <button type="button" onclick="eliminarFila(this)" class="text-red-500 font-bold text-xl">&times;</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="p-4 bg-gray-50 border-t flex justify-between items-center">
+                <button type="button" onclick="agregarFila()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded shadow transition text-sm">
+                    + Agregar otro producto
+                </button>
+            </div>
+        </div>
+
+        <!-- Total y Botón de Finalizar -->
+        <div class="bg-white p-6 rounded-lg shadow flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">
+                Total a Pagar: <span id="total-general" class="text-blue-600">$0.00</span>
+            </div>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded shadow transition text-lg">
+                Confirmar y Registrar Venta
+            </button>
+        </div>
+    </form>
+
+    <!-- Script para la lógica de la factura -->
+    <script>
+        let contadorFilas = 1;
+
+        function agregarFila() {
+            const tbody = document.getElementById('cuerpo-factura');
+            const nuevaFila = document.createElement('tr');
+            nuevaFila.className = 'border-b fila-producto';
+
+            // Armamos el HTML de la nueva fila usando el índice actual
+            nuevaFila.innerHTML = `
+                <td class="py-3 px-6">
+                    <select name="productos[${contadorFilas}][id]" class="w-full border border-gray-300 p-2 rounded select-producto" required onchange="actualizarPrecio(this)">
+                        <option value="">Seleccione producto...</option>
+                        @foreach(\App\Models\Producto::where('stock', '>', 0)->get() as $p)
+                            <option value="{{ $p->id }}" data-precio="{{ $p->precio }}" data-stock="{{ $p->stock }}">
+                                {{ $p->descripcion }} (Stock: {{ $p->stock }})
+                            </option>
+                        @endforeach
+                    </select>
+                </td>
+                <td class="py-3 px-6">
+                    <input type="number" name="productos[${contadorFilas}][cantidad]" min="1" value="1" class="w-full border border-gray-300 p-2 rounded input-cantidad" required onchange="calcularFila(this)">
+                </td>
+                <td class="py-3 px-6 precio-unitario-text">$0.00</td>
+                <td class="py-3 px-6 font-bold subtotal-text">$0.00</td>
+                <td class="py-3 px-6 text-center">
+                    <button type="button" onclick="eliminarFila(this)" class="text-red-500 font-bold text-xl">&times;</button>
+                </td>
+            `;
+            
+            tbody.appendChild(nuevaFila);
+            contadorFilas++; // Aumentamos el índice para la próxima fila
+        }
+
+        function eliminarFila(boton) {
+            const fila = boton.closest('tr');
+            // Si es la única fila que queda, solo limpiamos los valores
+            if (document.querySelectorAll('.fila-producto').length === 1) {
+                fila.querySelector('.select-producto').value = '';
+                fila.querySelector('.input-cantidad').value = 1;
+                fila.querySelector('.precio-unitario-text').textContent = '$0.00';
+                fila.querySelector('.subtotal-text').textContent = '$0.00';
+            } else {
+                // Si hay más filas, borramos la fila entera
+                fila.remove();
+            }
+            calcularTotalGeneral();
+        }
+
+        function actualizarPrecio(select) {
+            const fila = select.closest('tr');
+            const opcion = select.options[select.selectedIndex];
+            const precio = parseFloat(opcion.getAttribute('data-precio')) || 0;
+            
+            fila.querySelector('.precio-unitario-text').textContent = `$${precio.toFixed(2)}`;
+            calcularFila(select); // Recalculamos el subtotal y el total general
+        }
+
+        function calcularFila(elemento) {
+            const fila = elemento.closest('tr');
+            const select = fila.querySelector('.select-producto');
+            const cantidadInput = fila.querySelector('.input-cantidad');
+            
+            const opcion = select.options[select.selectedIndex];
+            const precio = parseFloat(opcion.getAttribute('data-precio')) || 0;
+            const stockMaximo = parseInt(opcion.getAttribute('data-stock')) || 0;
+            let cantidad = parseInt(cantidadInput.value) || 1;
+
+            // Validar stock en tiempo real
+            if (cantidad > stockMaximo) {
+                alert('No hay suficiente stock de este producto.');
+                cantidadInput.value = stockMaximo;
+                cantidad = stockMaximo;
+            }
+
+            const subtotal = precio * cantidad;
+            fila.querySelector('.subtotal-text').textContent = `$${subtotal.toFixed(2)}`;
+
+            calcularTotalGeneral();
+        }
+
+        function calcularTotalGeneral() {
+            let total = 0;
+            const filas = document.querySelectorAll('.fila-producto');
+            
+            filas.forEach(fila => {
+                const subtotalTexto = fila.querySelector('.subtotal-text').textContent;
+                const subtotal = parseFloat(subtotalTexto.replace('$', '')) || 0;
+                total += subtotal;
+            });
+
+            document.getElementById('total-general').textContent = `$${total.toFixed(2)}`;
+        }
+    </script>
 @endsection

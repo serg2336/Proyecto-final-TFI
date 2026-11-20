@@ -37,9 +37,23 @@
     @endif
 
     @if ($productosBajos->isNotEmpty())
-        <div class="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg px-4 py-3">
-            <p class="font-semibold">⚠️ Atención: {{ $productosBajos->count() }} repuesto(s) con stock bajo o agotado.</p>
-            <p class="text-sm">{{ $productosBajos->pluck('descripcion')->join(', ') }}</p>
+        <div
+            class="mb-6 bg-red-600 border border-red-500 rounded-lg px-4 py-3 text-white"
+            role="alert"
+            aria-live="polite"
+        >
+            <p class="font-bold flex items-center gap-2">
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white text-red-700 font-black text-xs" aria-hidden="true">!</span>
+                Atención: {{ $productosBajos->count() }} repuesto(s) con stock bajo o agotado
+            </p>
+            <p class="text-sm mt-2">
+                Reponé cuanto antes:
+                @foreach ($productosBajos as $productoBajo)
+                    <span class="inline-block bg-red-800 text-white font-semibold rounded px-2 py-0.5 mr-1 mb-1">
+                        {{ $productoBajo->descripcion }} ({{ $productoBajo->stock }} un.)
+                    </span>
+                @endforeach
+            </p>
         </div>
     @endif
 
@@ -60,7 +74,10 @@
             </thead>
             <tbody class="text-gray-700">
                 @forelse($productos as $producto)
-                    <tr class="hover:bg-gray-50 border-b">
+                    @php
+                        $stockBajo = $producto->stock <= $producto->stock_minimo;
+                    @endphp
+                    <tr @class(['hover:bg-gray-50 border-b', 'bg-red-100' => $stockBajo])>
                         <td class="py-4 px-6 font-mono text-sm">{{ $producto->codigo }}</td>
                         <td class="py-4 px-6 font-semibold">
                             {{ $producto->descripcion }}
@@ -69,12 +86,12 @@
                         <td class="py-4 px-6">
                             {{ $producto->marca }}@if($producto->modelo) / {{ $producto->modelo }}@endif
                         </td>
-                        <td class="py-4 px-6 font-bold">{{ $producto->stock }} un.</td>
+                        <td @class(['py-4 px-6 font-bold', 'text-red-600' => $stockBajo])>{{ $producto->stock }} un.</td>
                         <td class="py-4 px-6">
                             @if($producto->stock === 0)
-                                <span class="text-red-600 bg-red-100 px-2 py-1 rounded text-xs font-bold" title="Este producto no tiene unidades disponibles.">Sin stock</span>
-                            @elseif($producto->stock <= $producto->stock_minimo)
-                                <span class="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs font-bold" title="Quedan pocas unidades. Revisá el umbral de reposición.">Stock bajo</span>
+                                <span class="text-white bg-red-800 px-2 py-1 rounded text-xs font-bold" title="Este producto no tiene unidades disponibles.">Sin stock</span>
+                            @elseif($stockBajo)
+                                <span class="text-white bg-red-600 px-2 py-1 rounded text-xs font-bold" title="Quedan pocas unidades. Revisá el umbral de reposición.">Stock bajo</span>
                             @else
                                 <span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">Disponible</span>
                             @endif

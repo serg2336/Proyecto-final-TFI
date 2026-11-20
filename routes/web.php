@@ -4,6 +4,7 @@ use App\Http\Controllers\MovimientoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\UserController;
 use App\Models\Movimiento;
 use App\Models\Producto;
@@ -73,7 +74,15 @@ Route::middleware('auth')->group(function () {
 
     // Reportes y gestión de usuarios: solo administrador.
     Route::middleware('role:administrador')->group(function () {
-        Route::get('/reportes', fn () => view('reportes'))->name('reportes.index');
+        Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+
+        // Exportaciones de reportes en PDF y Excel.
+        Route::get('/reportes/inventario/pdf', [ReporteController::class, 'inventarioPdf'])->name('reportes.inventario.pdf');
+        Route::get('/reportes/inventario/excel', [ReporteController::class, 'inventarioExcel'])->name('reportes.inventario.excel');
+        Route::get('/reportes/movimientos/pdf', [ReporteController::class, 'movimientosPdf'])->name('reportes.movimientos.pdf');
+        Route::get('/reportes/movimientos/excel', [ReporteController::class, 'movimientosExcel'])->name('reportes.movimientos.excel');
+        Route::get('/reportes/pedidos/pdf', [ReporteController::class, 'pedidosPdf'])->name('reportes.pedidos.pdf');
+        Route::get('/reportes/pedidos/excel', [ReporteController::class, 'pedidosExcel'])->name('reportes.pedidos.excel');
 
         Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
         Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');

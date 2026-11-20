@@ -6,21 +6,13 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\UserController;
-<<<<<<< Updated upstream
-=======
 use App\Http\Controllers\VentaController;
-use App\Http\Controllers\ReporteController; // <--- IMPORTANTE
->>>>>>> Stashed changes
 use App\Models\Movimiento;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
-<<<<<<< Updated upstream
     // Dashboard con indicadores reales del inventario.
-=======
-    // 1. Dashboard
->>>>>>> Stashed changes
     Route::get('/', function () {
         $totalProductos = Producto::count();
         $stockCritico = Producto::whereColumn('stock', '<=', 'stock_minimo')->count();
@@ -38,11 +30,7 @@ Route::middleware('auth')->group(function () {
         return view('dashboard', compact('totalProductos', 'stockCritico', 'productosAReponer', 'ultimosMovimientos'));
     })->name('dashboard');
 
-<<<<<<< Updated upstream
     // Perfil del usuario autenticado (Breeze).
-=======
-    // 2. Perfil
->>>>>>> Stashed changes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -67,11 +55,7 @@ Route::middleware('auth')->group(function () {
         return view('stock', compact('productos', 'ultimosMovimientos'));
     })->name('stock.index');
 
-<<<<<<< Updated upstream
     // Pedidos y movimientos de stock: administrador y depósito.
-=======
-    // 4. Pedidos y movimientos (Admin y Depósito)
->>>>>>> Stashed changes
     Route::middleware('role:administrador,deposito')->group(function () {
         // Rutas de Pedidos (de Ramiro)
         Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
@@ -86,19 +70,17 @@ Route::middleware('auth')->group(function () {
     // Ventas y clientes: administrador y vendedor.
     Route::middleware('role:administrador,vendedor')->group(function () {
         Route::get('/ventas', fn () => view('ventas'))->name('ventas.index');
-<<<<<<< Updated upstream
-=======
         Route::post('/ventas', [VentaController::class, 'store'])->name('ventas.store');
->>>>>>> Stashed changes
         Route::get('/clientes', fn () => view('clientes'))->name('clientes.index');
     });
 
     // Reportes y gestión de usuarios: solo administrador.
     Route::middleware('role:administrador')->group(function () {
-<<<<<<< Updated upstream
+        
+        // Panel de reportes
         Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
-        // Exportaciones de reportes en PDF y Excel.
+        // Exportaciones de reportes en PDF y Excel (de Lía)
         Route::get('/reportes/inventario/pdf', [ReporteController::class, 'inventarioPdf'])->name('reportes.inventario.pdf');
         Route::get('/reportes/inventario/excel', [ReporteController::class, 'inventarioExcel'])->name('reportes.inventario.excel');
         Route::get('/reportes/movimientos/pdf', [ReporteController::class, 'movimientosPdf'])->name('reportes.movimientos.pdf');
@@ -106,18 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/reportes/pedidos/pdf', [ReporteController::class, 'pedidosPdf'])->name('reportes.pedidos.pdf');
         Route::get('/reportes/pedidos/excel', [ReporteController::class, 'pedidosExcel'])->name('reportes.pedidos.excel');
 
-=======
-        
-        // Vista de reportes
-        Route::get('/reportes', fn () => view('reportes'))->name('reportes.index');
-        
-        // --- TUS RUTAS NUEVAS DE EXPORTACIÓN ---
-        Route::get('/reportes/pdf', [ReporteController::class, 'exportPdf'])->name('reportes.pdf');
-        Route::get('/reportes/excel', [ReporteController::class, 'exportExcel'])->name('reportes.excel');
-        // ---------------------------------------
-
-        // Usuarios
->>>>>>> Stashed changes
+        // Gestión de usuarios
         Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
         Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
         Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('usuarios.update');
@@ -125,4 +96,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// Rutas de Login (Breeze)
 require __DIR__.'/auth.php';

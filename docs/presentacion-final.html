@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Presentación final - ITAL FIAT</title>
+<style>
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        font-family: 'DejaVu Sans', sans-serif;
+        color: #f5f5f5;
+        background: #070708;
+    }
+
+    .slide {
+        position: relative;
+        width: 100%;
+        padding: 14mm 18mm;
+        page-break-after: always;
+        background: #070708;
+        overflow: hidden;
+    }
+
+    .slide:last-child { page-break-after: auto; }
+
+    .slide.ultima { page-break-after: auto; }
+
+    .barra {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6mm;
+        background: #d20d1e;
+    }
+
+    .marca {
+        font-size: 11px;
+        letter-spacing: 2px;
+        color: #8a8a93;
+        text-transform: uppercase;
+        margin: 0 0 6mm;
+    }
+
+    .marca strong { color: #d20d1e; }
+
+    h1 {
+        font-size: 30px;
+        line-height: 1.15;
+        margin: 0 0 4mm;
+        color: #ffffff;
+    }
+
+    h1 .acento { color: #d20d1e; }
+
+    h2 {
+        font-size: 22px;
+        margin: 0 0 5mm;
+        color: #ffffff;
+        border-left: 5px solid #d20d1e;
+        padding-left: 10px;
+    }
+
+    .lead {
+        font-size: 12px;
+        color: #b9b9c2;
+        margin: 0 0 6mm;
+    }
+
+    ul {
+        margin: 0;
+        padding-left: 6mm;
+        font-size: 13px;
+        line-height: 1.7;
+        color: #e2e2e8;
+    }
+
+    li { margin-bottom: 2.5mm; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        margin-top: 3mm;
+    }
+
+    th {
+        background: #d20d1e;
+        color: #ffffff;
+        text-align: left;
+        padding: 2.5mm 3mm;
+        text-transform: uppercase;
+        font-size: 9px;
+        letter-spacing: 1px;
+    }
+
+    td {
+        border-bottom: 1px solid #26262c;
+        padding: 2.5mm 3mm;
+        color: #e2e2e8;
+    }
+
+    .centro { text-align: center; }
+
+    .nota {
+        position: absolute;
+        left: 18mm;
+        right: 18mm;
+        bottom: 10mm;
+        font-size: 9px;
+        color: #7d7d86;
+        border-top: 1px solid #26262c;
+        padding-top: 3mm;
+    }
+
+    .numero {
+        position: absolute;
+        right: 18mm;
+        bottom: 10mm;
+        font-size: 10px;
+        color: #d20d1e;
+        font-weight: bold;
+    }
+
+    .portada {
+        text-align: center;
+        padding-top: 26mm;
+    }
+
+    .portada h1 { font-size: 40px; }
+
+    .portada .sub {
+        font-size: 13px;
+        color: #b9b9c2;
+        margin: 6mm 0 12mm;
+    }
+
+    .portada .integrantes {
+        font-size: 12px;
+        color: #e2e2e8;
+        line-height: 1.8;
+    }
+
+    .sello {
+        display: inline-block;
+        border: 2px solid #d20d1e;
+        color: #d20d1e;
+        font-size: 10px;
+        letter-spacing: 3px;
+        padding: 2mm 5mm;
+        margin-bottom: 8mm;
+    }
+
+    .columnas {
+        display: table;
+        width: 100%;
+    }
+
+    .columna {
+        display: table-cell;
+        width: 50%;
+        vertical-align: top;
+        padding-right: 8mm;
+    }
+
+    .tarjeta {
+        background: #101014;
+        border: 1px solid #26262c;
+        border-left: 4px solid #d20d1e;
+        padding: 4mm 5mm;
+        margin-bottom: 4mm;
+    }
+
+    .tarjeta h3 {
+        margin: 0 0 2mm;
+        font-size: 12px;
+        color: #ffffff;
+    }
+
+    .tarjeta p {
+        margin: 0;
+        font-size: 10px;
+        color: #b9b9c2;
+        line-height: 1.5;
+    }
+
+    .flujo {
+        font-family: 'DejaVu Sans Mono', monospace;
+        font-size: 10px;
+        color: #e2e2e8;
+        background: #101014;
+        border: 1px solid #26262c;
+        padding: 5mm;
+        line-height: 1.8;
+        margin-top: 4mm;
+    }
+
+    .gracias {
+        text-align: center;
+        padding-top: 38mm;
+    }
+
+    .gracias h1 { font-size: 46px; }
+
+    .gracias p {
+        font-size: 14px;
+        color: #b9b9c2;
+    }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide portada">
+    <div class="barra"></div>
+    <div class="sello">TRABAJO FINAL INTEGRADOR</div>
+    <h1>Sistema de gestión de<br><span class="acento">repuestos ITAL FIAT</span></h1>
+    <p class="sub">Catálogo, stock, pedidos y reportes en una sola aplicación</p>
+    <div class="integrantes">
+        Sergio Soria · Lía Barcos · Ramiro Corrales<br>
+        Grupo 8 · 2026
+    </div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>El problema</h2>
+    <ul>
+        <li>El control de repuestos se hace en planillas y de forma manual.</li>
+        <li>No hay alertas cuando un repuesto se agota.</li>
+        <li>Los pedidos a proveedores se pierden o se duplican.</li>
+        <li>No existen reportes confiables para tomar decisiones.</li>
+    </ul>
+    <p class="nota">El problema central es la falta de trazabilidad: no se sabe con certeza qué hay, qué falta y qué se pidió.</p>
+    <span class="numero">02</span>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>La solución</h2>
+    <div class="columnas">
+        <div class="columna">
+            <div class="tarjeta">
+                <h3>Catálogo único</h3>
+                <p>Repuestos con código, marca, modelo, precio, stock y stock mínimo.</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Alertas en rojo</h3>
+                <p>Aviso inmediato cuando un producto llega al mínimo o se agota.</p>
+            </div>
+        </div>
+        <div class="columna">
+            <div class="tarjeta">
+                <h3>Pedidos a proveedores</h3>
+                <p>Recepción del pedido que actualiza el stock automáticamente.</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Reportes</h3>
+                <p>Inventario, movimientos y pedidos exportables en PDF y Excel.</p>
+            </div>
+        </div>
+    </div>
+    <span class="numero">03</span>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Alcance funcional</h2>
+    <table>
+        <tr><th>HU</th><th>Funcionalidad</th><th class="centro">Estado</th></tr>
+        <tr><td>HU1</td><td>Inicio de sesión y roles</td><td class="centro">Completada</td></tr>
+        <tr><td>HU2</td><td>Gestión de usuarios</td><td class="centro">Completada</td></tr>
+        <tr><td>HU3</td><td>ABM de productos</td><td class="centro">Completada</td></tr>
+        <tr><td>HU4</td><td>Control de stock</td><td class="centro">Completada</td></tr>
+        <tr><td>HU5</td><td>Pedidos a proveedores</td><td class="centro">Completada</td></tr>
+        <tr><td>HU6</td><td>Reportes en PDF y Excel</td><td class="centro">Completada</td></tr>
+        <tr><td>HU7</td><td>Dashboard dinámico</td><td class="centro">En curso</td></tr>
+        <tr><td>HU8</td><td>Cierre y despliegue</td><td class="centro">En curso</td></tr>
+    </table>
+    <span class="numero">04</span>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Stack tecnológico</h2>
+    <div class="columnas">
+        <div class="columna">
+            <ul>
+                <li><strong>Backend:</strong> Laravel 13 · PHP 8.3</li>
+                <li><strong>Base de datos:</strong> MySQL</li>
+                <li><strong>Frontend:</strong> Blade + Tailwind CSS</li>
+                <li><strong>Autenticación:</strong> Laravel Breeze</li>
+            </ul>
+        </div>
+        <div class="columna">
+            <ul>
+                <li><strong>PDF:</strong> barryvdh/laravel-dompdf</li>
+                <li><strong>Excel:</strong> maatwebsite/excel</li>
+                <li><strong>Testing:</strong> PHPUnit</li>
+                <li><strong>Gestión:</strong> Git, GitHub y Jira (Scrum)</li>
+            </ul>
+        </div>
+    </div>
+    <p class="nota">Elegimos Laravel por su ecosistema, sus migraciones y la seguridad que trae de fábrica.</p>
+    <span class="numero">05</span>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Arquitectura</h2>
+    <ul>
+        <li>Patrón MVC con controladores por dominio.</li>
+        <li>Rutas protegidas por middleware <strong>auth</strong> y <strong>role</strong>.</li>
+        <li>Vistas Blade reutilizables y migraciones reproducibles.</li>
+    </ul>
+    <div class="flujo">
+        Navegador → Rutas → Middleware de rol → Controlador → Modelo → MySQL<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vistas Blade
+    </div>
+    <p class="nota">El middleware de rol es la pieza clave: cada usuario ve solo lo que le corresponde.</p>
+    <span class="numero">06</span>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Roles y permisos</h2>
+    <table>
+        <tr><th>Función</th><th class="centro">Admin</th><th class="centro">Vendedor</th><th class="centro">Depósito</th></tr>
+        <tr><td>Productos (alta y edición)</td><td class="centro">Sí</td><td class="centro">Sí</td><td class="centro">Sí</td></tr>
+        <tr><td>Eliminar productos</td><td class="centro">Sí</td><td class="centro">No</td><td class="centro">No</td></tr>
+        <tr><td>Movimientos de stock</td><td class="centro">Sí</td><td class="centro">No</td><td class="centro">Sí</td></tr>
+        <tr><td>Pedidos a proveedores</td><td class="centro">Sí</td><td class="centro">No</td><td class="centro">Sí</td></tr>
+        <tr><td>Reportes</td><td class="centro">Sí</td><td class="centro">No</td><td class="centro">No</td></tr>
+        <tr><td>Gestión de usuarios</td><td class="centro">Sí</td><td class="centro">No</td><td class="centro">No</td></tr>
+    </table>
+    <span class="numero">07</span>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Demo · Acceso y productos</h2>
+    <ul>
+        <li>Login con correo y contraseña, con botón para mostrar la clave.</li>
+        <li>Ingreso como administrador y redirección por rol.</li>
+        <li>Dashboard con indicadores del inventario.</li>
+        <li>Productos: búsqueda, alta y edición con validación de código único.</li>
+    </ul>
+    <p class="nota">Destacar los mensajes en español y la validación del código duplicado.</p>
+    <span class="numero">08</span>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Demo · Stock y alertas</h2>
+    <ul>
+        <li>Alerta roja con el detalle de los repuestos a reponer.</li>
+        <li>Fila resaltada y estado «Stock bajo» o «Sin stock».</li>
+        <li>Registro de entradas y salidas con historial.</li>
+        <li>Botón «Pedir al proveedor» en los productos bajo mínimo.</li>
+    </ul>
+    <p class="nota">La alerta roja es el corazón de la HU4: se ve de inmediato qué hay que reponer.</p>
+    <span class="numero">09</span>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Demo · Pedidos y reportes</h2>
+    <ul>
+        <li>Pedido pendiente y recepción con actualización del stock.</li>
+        <li>Reportes con filtro por rango de fechas.</li>
+        <li>Descarga del inventario en PDF y de los movimientos en Excel.</li>
+    </ul>
+    <p class="nota">El circuito completo: pedido → recepción → stock actualizado → reporte.</p>
+    <span class="numero">10</span>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Calidad y pruebas</h2>
+    <ul>
+        <li><strong>122 tests automatizados</strong> con PHPUnit (473 assertions).</li>
+        <li>Cobertura de autenticación, permisos, productos, stock, pedidos y reportes.</li>
+        <li>Pruebas de stress con alto volumen de datos.</li>
+        <li>Revisión manual en navegador de cada pantalla.</li>
+    </ul>
+    <p class="nota">Los tests nos permitieron refactorizar sin miedo y detectar regresiones antes de mergear.</p>
+    <span class="numero">11</span>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Despliegue</h2>
+    <ul>
+        <li>Repositorio en GitHub con ramas <strong>main</strong> y <strong>develop</strong>.</li>
+        <li>Pull Requests revisados por el equipo antes de mergear.</li>
+        <li>Entornos reproducibles con migraciones y seeders.</li>
+        <li>Próximo paso: Docker y Azure (HU8).</li>
+    </ul>
+    <span class="numero">12</span>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Dificultades y aprendizajes</h2>
+    <ul>
+        <li>Integrar Breeze con el login propio y los roles.</li>
+        <li>Resolver conflictos de merge entre ramas paralelas.</li>
+        <li>Migrar la base y mantener datos de prueba consistentes.</li>
+        <li>Entender las diferencias entre el entorno local y el despliegue.</li>
+    </ul>
+    <p class="nota">Aprendimos a trabajar con ramas cortas, PRs pequeños y tests que respaldan cada cambio.</p>
+    <span class="numero">13</span>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+    <div class="barra"></div>
+    <p class="marca"><strong>ITAL FIAT</strong> · Repuestos &amp; Stock</p>
+    <h2>Próximos pasos</h2>
+    <ul>
+        <li>HU7: dashboard con pedidos y ventas reales.</li>
+        <li>Módulo de ventas y clientes.</li>
+        <li>Docker + Azure para el despliegue final.</li>
+        <li>Documentación de la API y colección de Postman.</li>
+    </ul>
+    <span class="numero">14</span>
+</section>
+
+<!-- 15 -->
+<section class="slide gracias ultima">
+    <div class="barra"></div>
+    <h1>¡Gracias!</h1>
+    <p>Cada producto, en su lugar.</p>
+    <p style="margin-top: 18mm; font-size: 11px;">ITAL FIAT · Formosa, Argentina</p>
+</section>
+
+</body>
+</html>

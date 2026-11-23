@@ -276,7 +276,8 @@
                     <tbody class="text-gray-700">
                         @forelse ($pedidos as $pedido)
                             <tr class="hover:bg-gray-50 border-b">
-                                <td class="py-3 px-4 font-mono text-sm">PED-{{ str_pad($pedido->id, 3, '0', STR_PAD_LEFT) }}</td>
+                                <!-- ACÁ ESTÁ EL CAMBIO CLAVE: Usa el código real de la BD -->
+                                <td class="py-3 px-4 font-mono text-sm">{{ $pedido->codigo ?? 'PED-' . str_pad($pedido->id, 3, '0', STR_PAD_LEFT) }}</td>
                                 <td class="py-3 px-4">
                                     {{ $pedido->producto?->descripcion ?? 'Producto eliminado' }}
                                     <span class="text-xs text-gray-400 block">{{ $pedido->producto?->codigo ?? '—' }}</span>

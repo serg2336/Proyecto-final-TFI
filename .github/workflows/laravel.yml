@@ -1,43 +1,52 @@
-steps:
-  - name: Checkout del código
-    uses: actions/checkout@v4
+name: Laravel CI
 
-  - name: Configurar PHP 8.4
-    uses: shivammathur/setup-php@v2
-    with:
-      php-version: '8.4'
-      extensions: mbstring, bcmath, pdo, sqlite3, pdo_sqlite, gd, zip
-      coverage: none
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - ci/github-actions
 
-  - name: Configurar Node.js
-    uses: actions/setup-node@v4
-    with:
-      node-version: '20'
-      cache: npm
+  pull_request:
+    branches:
+      - main
+      - develop
 
-  - name: Instalar dependencias de Node
-    run: npm ci
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
 
-  - name: Compilar assets de Vite
-    run: npm run build
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
 
-  - name: Instalar dependencias de Composer
-    run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Configurar PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, bcmath, pdo, sqlite3, pdo_sqlite, gd, zip
+          coverage: none
 
-  - name: Copiar archivo .env
-    run: cp .env.example .env
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
 
-  - name: Generar clave de aplicación
-    run: php artisan key:generate
+      - name: Instalar dependencias de Node
+        run: npm ci
 
-  - name: Ejecutar migraciones
-    run: php artisan migrate --force
-    env:
-      DB_CONNECTION: sqlite
-      DB_DATABASE: database/database.sqlite
+      - name: Compilar assets de Vite
+        run: npm run build
 
-  - name: Ejecutar pruebas
-    run: php artisan test
-    env:
-      DB_CONNECTION: sqlite
-      DB_DATABASE: ':memory:'
+      - name: Instalar dependencias de Composer
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Copiar archivo .env
+        run: cp .env.example .env
+
+      - name: Generar clave de aplicación
+        run: php artisan key:generate
+
+      - name: Ejecutar pruebas
+        run: php artisan test

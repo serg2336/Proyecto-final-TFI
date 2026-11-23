@@ -10,7 +10,6 @@ jobs:
   laravel-tests:
     runs-on: ubuntu-latest
 
-    # Servicio de MySQL para que las pruebas puedan conectarse
     services:
       mysql:
         image: mysql:8
@@ -31,6 +30,20 @@ jobs:
         php-version: '8.4'
         extensions: mbstring, bcmath, pdo, mysql, gd, zip
         coverage: none
+
+    # --- ESTO ES LO NUEVO: Instalar Node.js y compilar Vite ---
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Instalar dependencias de Node
+      run: npm install
+
+    - name: Compilar assets (Vite)
+      run: npm run build
+    # ----------------------------------------------------------
 
     - name: Instalar dependencias de Composer
       run: composer install --prefer-dist --no-progress

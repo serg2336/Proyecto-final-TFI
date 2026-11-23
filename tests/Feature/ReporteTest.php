@@ -65,6 +65,7 @@ class ReporteTest extends TestCase
 
     public function test_administrador_ve_reportes_con_datos_reales(): void
     {
+       
         $producto = $this->producto(['precio' => 1500, 'stock' => 4, 'stock_minimo' => 5]);
         $this->movimiento($producto, ['cantidad' => 7, 'motivo' => 'Compra inicial']);
         Pedido::create([

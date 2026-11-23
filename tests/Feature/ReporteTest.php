@@ -31,7 +31,7 @@ class ReporteTest extends TestCase
     private function producto(array $atributos = []): Producto
     {
         return Producto::create(array_merge([
-      
+            'codigo' => 'REP-001',
             'descripcion' => 'Filtro de aceite',
             'marca' => 'Fiat',
             'modelo' => 'Palio',

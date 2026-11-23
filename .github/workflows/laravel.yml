@@ -17,6 +17,12 @@ jobs:
   laravel-tests:
     runs-on: ubuntu-latest
 
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ':memory:'
+      DB_URL: ''
+
     steps:
       - name: Checkout del codigo
         uses: actions/checkout@v4
@@ -52,19 +58,9 @@ jobs:
       - name: Limpiar configuracion
         run: php artisan config:clear
 
-      - name: Verificar base de datos
+      - name: Verificar conexion de Laravel
         run: |
           php artisan tinker --execute="dump(config('database.default')); dump(config('database.connections.sqlite.database'));"
-        env:
-          APP_ENV: testing
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
-          DB_URL: ''
 
       - name: Ejecutar pruebas
         run: php artisan test
-        env:
-          APP_ENV: testing
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
-          DB_URL: ''
